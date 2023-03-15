@@ -1,0 +1,61 @@
+import { Text, View } from 'react-native';
+import Profile from '../components/Profile'
+import Device from '../components/Device'
+import { useNavigation } from '@react-navigation/native';
+import React, { useLayoutEffect } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+const Weather = () => (
+    <View className="flex-col ">
+        <Text style={{fontFamily: 'LexendMedium'}} className={`text-[14px] leading-[21px]`}>Trời nhiều mây</Text>
+        <Text style={{fontFamily: 'LexendSemiBold'}} className={`text-[25px] leading-[21px]`}>31'C</Text>
+        <Text style={{fontFamily: 'LexendRegular'}} className={`text-[12px] leading-[21px]`}>Độ ẩm</Text>
+    </View>
+)
+
+export default function Home() {
+    
+    const navigation = useNavigation();
+    useLayoutEffect(() => {
+        navigation.setOptions({
+          headerShown: false,
+        })
+    }, [])
+
+    const devices = [
+        {
+            'icon': "lightbulb-outline", 
+            'name': 'Đèn',
+            'amount': "8",
+            'enabled': true,
+        },
+        {
+            'icon': "fan",
+            'name': 'Quạt',
+            'amount': "7",
+            'enabled': false,
+        },
+        {
+            'icon': "bell-alert-outline",
+            'name': 'Chống trộm',
+            'amount': "1",
+            'enabled': false,
+        },
+    ]
+  return (
+    <SafeAreaView className="flex-1 bg-lightblue relative">
+        <Profile></Profile>
+        <Weather></Weather>
+        <View className="px-[5%] py-[2%]">
+            <Text style = {{fontFamily: "LexendRegular"}} className={`text-[18px] leading-[27px]`}>Các thiết bị kết nối</Text>
+        </View>
+        <View className="flex-row flex-wrap justify-between px-[5%]">
+            {
+                devices.map((device, index) =>
+                    <Device key={index} props={device}></Device>
+                )
+            }
+        </View>
+    </SafeAreaView>
+  );
+}
