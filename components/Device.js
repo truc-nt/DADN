@@ -1,41 +1,28 @@
 import React, {useState} from 'react';
-import { StyleSheet, Text, View, Button, Switch} from 'react-native';
+import { Text, View, Switch, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function Device({props}) {
-    const [isEnabled, setIsEnabled] = useState(true);
+    const [isEnabled, setIsEnabled] = useState(props.enabled);
     return (
-        <View style={[styles.container, isEnabled ? {backgroundColor: '#5AC2DA'} :  {backgroundColor: 'white'}]}>
-            {props.icon}
-            <View>
-                <Text style = {{fontWeight: 'bold'}}>{props.name}</Text>
-                <Text style = {{fontSize: 8}}>{props.amount} thiết bị</Text>
+        <TouchableOpacity className={`rounded-[20px] ${isEnabled?"bg-blue":"bg-white"} px-[4%] py-[4%] w-[45%] my-[3%]`}>
+            <MaterialCommunityIcons name={props.icon} size={30} color={`${isEnabled ? "white" : "black"}`} />
+            <View className="mt-[20%]">
+                <Text style = {{fontFamily: "LexendSemiBold"}} className={`text-[17px] leading-[21px] ${isEnabled ? "text-white" : "text-black"}`}>{props.name}</Text>
+                <Text style ={{fontFamily: "LexendRegular"}} className={`text-[13px] leading-[21px] ${isEnabled ? "text-white" : "text-black"}`}>{props.amount} thiết bị</Text>
             </View>
-            <View style={styles.button}>
-                <Text style = {{fontWeight: 'bold'}}>{isEnabled ? "On" : "Off"}</Text>
+            <View className="flex-row justify-between mt-[6%]">
+                <Text style ={{fontFamily: "LexendMedium"}} className={`text-[17px] leading-[21px] self-center ${isEnabled ? "text-white" : "text-black"}`}>{isEnabled ? "On" : "Off"}</Text>
                 <Switch
-                trackColor={{false: '#grey', true: 'black'}}
-                onValueChange={() => setIsEnabled(previousState => !previousState)}
-                value={isEnabled}/>
+                    trackColor={{false: '#DAE9F6', true: 'black'}}
+                    thumbColor={'#F4FAFF'}
+                    onValueChange={() => {
+                        setIsEnabled(previousState => !previousState)
+                        //change on/off of device in server
+                    }}
+                    value={isEnabled}
+                />
             </View>
-        </View>
+        </TouchableOpacity>
     );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    borderRadius: '20',
-    padding: '6%',
-    gap: '20%',
-    width: '48%',
-    backgroundColor: 'white',
-  },
-  text: {
-    active: {
-        color: 'white',
-    }
-  },
-  button: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  }
-});

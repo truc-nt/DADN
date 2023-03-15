@@ -1,25 +1,30 @@
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, StyleSheet, ScrollView, Text, View, Button} from 'react-native';
-import Home from './screens/Home.js'
-import Navigate from './components/Navigate.js'
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Home from './screens/Home';
+import Login from './screens/Login';
+import OnBoard from './screens/OnBoard';
+import Register from './screens/Register';
+import { useFonts } from 'expo-font'; 
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const [fontLoaded] = useFonts({
+    LexendExtraLight: require("./assets/font/static/Lexend-ExtraLight.ttf"),
+    LexendRegular: require("./assets/font/static/Lexend-Regular.ttf"),
+    LexendSemiBold: require("./assets/font/static/Lexend-SemiBold.ttf"),
+    LexendBold: require("./assets/font/static/Lexend-Bold.ttf"),
+    LexendMedium: require("./assets/font/static/Lexend-Medium.ttf"),
+  })
+  if (!fontLoaded) return null;
   return (
-    <View style={styles.container}>
-        <Home></Home>
-        <Navigate></Navigate>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="OnBoard" component={OnBoard} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name='Register' component={Register} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F4FAFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingRight: '5%',
-    paddingLeft: '5%',
-    paddingTop: '8%',
-  },
-});

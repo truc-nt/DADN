@@ -1,34 +1,21 @@
-import { StyleSheet, Text, View, Image, Button} from 'react-native';
+import { Text, View, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function Profile() {
   return (
-    <View style={styles.container}>
-        <View>
-            <Image source={{uri: 'https://reactnative.dev/docs/assets/p_cat2.png'}} style={styles.img}></Image>
+    <View className="flex-row px-[5%] py-[2%]">
+        <Image 
+            source={require('../assets/image/Profile.png')}
+            className="w-[50px] h-[50px] self-center"
+        ></Image>
+        <View className="flex-col pl-[7%]">
+            <Text style={{fontFamily: "LexendBold"}} className="text-[20px] leading-[21px]" >Hi Fic Human</Text>
+            <Text style={{fontFamily: "LexendRegular"}} className="text-[14px] leading-[21px]">{new Date().toDateString()}</Text>
+            <Text style={{fontFamily: "LexendRegular"}} className="text-[14px] leading-[21px]">Căn hộ fiction</Text>
         </View>
-        <View>
-            <Text styles={{fontWeight: 'bold'}}>Hi Fic Human</Text>
-            <Text>{new Date().toDateString()}</Text>
-            <Text>Căn hộ fiction</Text>
-        </View>
-        <View>
-            <Ionicons name="settings" size={24} color="black" />
+        <View className="self-center ml-[auto]">
+          <Ionicons name="settings" size={24} color="#5AC2DA"/>
         </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    flexDirection: 'row',
-    height: '20%',
-    alignItems: 'center',
-    justifyContent: 'space-between'
-  },
-  img: {
-    height: 40,
-    width: 50
-  }
-});
