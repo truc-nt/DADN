@@ -6,6 +6,9 @@ import OnBoard from './screens/OnBoard';
 import Register from './screens/Register';
 import Setting from './screens/Setting';
 import Light from './screens/Light';
+import Fan from './screens/Fan';
+import LightItemDetail from './screens/LightItemDetail';
+import FanItemDetail from './screens/FanItemDetail';
 import { useFonts } from 'expo-font'; 
 
 const Stack = createNativeStackNavigator();
@@ -28,6 +31,9 @@ export default function App() {
         <Stack.Screen name='Register' component={Register} />
         <Stack.Screen name='Setting' component={Setting} />
         <Stack.Screen name='Light' component={Light} />
+        <Stack.Screen name='Fan' component={Fan} />
+        <Stack.Screen name='LightItemDetail' component={LightItemDetail} />
+        <Stack.Screen name='FanItemDetail' component={FanItemDetail} />
       </Stack.Navigator>
     </NavigationContainer>
   );

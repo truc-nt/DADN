@@ -2,7 +2,6 @@ import { Text, View, ScrollView, Image } from 'react-native';
 import Profile from '../components/Profile';
 import Device from '../components/Device';
 import NavBar from '../components/NavBar';
-import { useNavigation } from '@react-navigation/native';
 import React, { useLayoutEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -22,9 +21,8 @@ const Weather = () => (
     </View>
 )
 
-export default function Home() {
+export default function Home({navigation}) {
     
-    const navigation = useNavigation();
     useLayoutEffect(() => {
         navigation.setOptions({
           headerShown: false,

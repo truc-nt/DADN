@@ -9,10 +9,10 @@ const DeviceItem = (props) => {
 
     return (
         <TouchableOpacity className={`flex mx-[22px] py-[15px] ${props.border?"border-b-[1px]":""} h-[90px]`}
-            onPress={() => navigation.navigate("Setting")}
+            onPress={() => navigation.navigate(props.light?"LightItemDetail":"FanItemDetail", {id: props.id})}
         >
             <View className="flex-row justify-between items-center">
-                <Text style={{fontFamily: "LexendSemiBold"}} className="text-[17px] leading-[21px]">{(props.light?"Đèn":"Quạt") + " " + props.id}</Text>
+                <Text style={{fontFamily: "LexendSemiBold"}} className="text-[17px] leading-[21px]">{props.name}</Text>
                 <Switch
                     trackColor={{false: '#DAE9F6', true: '#5AC2DA'}}
                     thumbColor={'#F4FAFF'}
@@ -33,7 +33,7 @@ const DeviceItem = (props) => {
     )
 }
 
-const DevicesList = (props) => {
+const DeviceItemsList = (props) => {
   return (
     <View className="h-[80%] w-[100%]">
         <ScrollView className="w-[100%] bg-semiblue rounded-[20px]">
@@ -45,6 +45,7 @@ const DevicesList = (props) => {
                     control = {device.control}
                     on = {device.on}
                     border = {index == props.devicesList.length?false:true}
+                    name = {device.name}
                     key = {index}
                 />
             )} 
@@ -53,4 +54,4 @@ const DevicesList = (props) => {
   )
 }
 
-export default DevicesList
+export default DeviceItemsList

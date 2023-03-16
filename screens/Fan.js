@@ -1,11 +1,16 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import React, { useLayoutEffect } from 'react';
+import OnOffDevice from "../components/OnOffDevice";
 
-const Fan = () => {
+const Fan = ({navigation}) => {
+  
+  useLayoutEffect(() => {
+      navigation.setOptions({
+      headerShown: false,
+    })
+  }, [])
+
   return (
-    <View>
-      <Text>Fan</Text>
-    </View>
+    <OnOffDevice fan />
   )
 }
 

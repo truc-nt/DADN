@@ -1,13 +1,11 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useLayoutEffect, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
 import Input from '../components/Input';
 
-const Register = () => {
+const Register = ({navigation}) => {
 
-    const navigation = useNavigation();
     useLayoutEffect(() => {
         navigation.setOptions({
           headerShown: false,
