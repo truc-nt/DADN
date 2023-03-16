@@ -19,7 +19,7 @@ module.exports = {
         'blue': '#5AC2DA',
         'offhome': '#DAE9F6',
         'grey': '#ABAFB3'
-      }
+      },
     },
   },
   

@@ -13,23 +13,23 @@ const OnBoard = () => {
     }, [])
 
     return (
-        <SafeAreaView className="flex-1 bg-lightblue relative">
-            <View className="flex-row px-[7%] mt-[2%]">
+        <SafeAreaView className="flex-1 bg-lightblue relative px-[8%] items-center">
+            <View className="flex-row h-[7%] w-[100%]">
                 <Text style={{fontFamily: "LexendBold"}} className="text-[24px] leading-[28.8px]">Fiction Home</Text>
             </View>
-            <View className="flex-row mt-[4%] items-center justify-center px-[20%]">
-                <Text style={{fontFamily: "LexendBold"}}  className="text-[32px] leading-[28.8px] text-center">Home of your imagination</Text>
+            <View className="flex-row w-[70%] justify-center h-[10%]">
+                <Text style={{fontFamily: "LexendBold"}}  className="text-[32px] leading-[28.8px] text-center ">Home of your imagination</Text>
             </View>
-            <View className="flex-row items-center justify-center px-[25%]">
-                <Text style={{fontFamily: "LexendExtraLight"}}  className="text-[16px] leading-[16px]">Manage your home anywhere, anytime</Text>
+            <View className="flex-row w-[60%] justify-center h-[7%]">
+                <Text style={{fontFamily: "LexendExtraLight"}}  className="text-[16px] leading-[16px] text-center">Manage your home anywhere, anytime</Text>
             </View>
-            <View className="flex-row items-center justify-center mt-[3%] px-[7%]">
+            <View className="flex-row justify-center h-[60%] w-[100%]">
                 <Image 
-                    source={require('../assets/image/home.png')}
-                    className=" object-cover"
+                    source={require('../assets/image/Home.png')}
+                    className="w-[100%] h-[100%]  rounded-t-[180px] rounded-b-[90px]"
                 />
             </View>
-            <View className="flex-row items-center justify-between mt-[4%] px-[13%]">
+            <View className="flex-row items-center justify-between h-[16%] w-[90%]">
                 <TouchableOpacity className="rounded-[50px] bg-black items-center justify-center w-[141px] h-[49px]" 
                     onPress={() => navigation.navigate("Login")}
                 >
@@ -38,7 +38,7 @@ const OnBoard = () => {
                 <TouchableOpacity className="rounded-[50px] bg-white items-center justify-center border-[3px] w-[141px] h-[49px]"
                     onPress={() => navigation.navigate("Register")}
                 >
-                    <Text style={{fontFamily: "LexendSemiBold"}} className="text-[20px] leading-[30px] text-black">Regiter</Text>
+                    <Text style={{fontFamily: "LexendSemiBold"}} className="text-[20px] leading-[30px] text-black">Register</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
