@@ -12,9 +12,9 @@ const DeviceItem = (props) => {
             onPress={() => navigation.navigate(props.light?"LightItemDetail":"FanItemDetail", {id: props.id})}
         >
             <View className="flex-row justify-between items-center">
-                <Text style={{fontFamily: "LexendSemiBold"}} className="text-[17px] leading-[21px]">{props.name}</Text>
+                <Text style={{fontFamily: "LexendMedium"}} className="text-[20px] leading-[21px]">{props.name}</Text>
                 <Switch
-                    trackColor={{false: '#DAE9F6', true: '#5AC2DA'}}
+                    trackColor={{false: 'white', true: '#5AC2DA'}}
                     thumbColor={'#F4FAFF'}
                     onValueChange={() => {
                         setControl(1);
@@ -27,7 +27,7 @@ const DeviceItem = (props) => {
             </View>
             <View className="flex-row justify-between">
                 <Text style={{fontFamily: "LexendRegular"}} className="text-[13px] leading-[21px] text-grey">{props.pos}</Text>
-                <Text style={{fontFamily: "LexendRegular"}} className="text-[13px] leading-[21px] text-grey">{control?"Bằng tay":"Tự động"}</Text>
+                <Text style={{fontFamily: "LexendRegular"}} className="text-[13px] leading-[21px] text-grey">{control?"Thủ công":"Tự động"}</Text>
             </View>
         </TouchableOpacity>
     )
@@ -35,8 +35,8 @@ const DeviceItem = (props) => {
 
 const DeviceItemsList = (props) => {
   return (
-    <View className="h-[80%] w-[100%]">
-        <ScrollView className="w-[100%] bg-semiblue rounded-[20px]">
+    <View className="h-[77%] w-[100%]">
+        <ScrollView className="w-[100%] bg-semiblue rounded-[20px] ">
             {props.devicesList.map((device, index) => 
                 <DeviceItem 
                     id = {device.id}
@@ -44,7 +44,7 @@ const DeviceItemsList = (props) => {
                     pos = {device.pos}
                     control = {device.control}
                     on = {device.on}
-                    border = {index == props.devicesList.length?false:true}
+                    border = {index == props.devicesList.length-1?false:true}
                     name = {device.name}
                     key = {index}
                 />

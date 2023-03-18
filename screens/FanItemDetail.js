@@ -2,8 +2,7 @@ import React, { useLayoutEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import OnOffDeviceDetail from '../components/OnOffDeviceDetail'
 
-const FanItemDetail = (route) => {
-  const navigation = useNavigation();
+const FanItemDetail = ({route, navigation}) => {
   useLayoutEffect(() => {
       navigation.setOptions({
       headerShown: false,
@@ -15,5 +14,4 @@ const FanItemDetail = (route) => {
     <OnOffDeviceDetail fan id={parseInt(JSON.stringify(id))}/>
   )
 }
-
 export default FanItemDetail

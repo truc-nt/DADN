@@ -7,6 +7,7 @@ import Register from './screens/Register';
 import Setting from './screens/Setting';
 import Light from './screens/Light';
 import Fan from './screens/Fan';
+import Thief from './screens/Thief';
 import LightItemDetail from './screens/LightItemDetail';
 import FanItemDetail from './screens/FanItemDetail';
 import { useFonts } from 'expo-font'; 
@@ -32,6 +33,7 @@ export default function App() {
         <Stack.Screen name='Setting' component={Setting} />
         <Stack.Screen name='Light' component={Light} />
         <Stack.Screen name='Fan' component={Fan} />
+        <Stack.Screen name='Thief' component={Thief} />
         <Stack.Screen name='LightItemDetail' component={LightItemDetail} />
         <Stack.Screen name='FanItemDetail' component={FanItemDetail} />
       </Stack.Navigator>

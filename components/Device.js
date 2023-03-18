@@ -8,7 +8,7 @@ export default function Device({props}) {
     const navigation = useNavigation();
     return (
         <TouchableOpacity className={`rounded-[20px] ${isEnabled?"bg-blue":"bg-white"} px-[4%] py-[4%] w-[45%] my-[3%]`}
-            onPress={() => navigation.navigate(`${props.type=='light'?"Light":"Fan"}`)}
+            onPress={() => navigation.navigate(`${props.type=='light'?"Light":props.type=='fan'?"Fan":"Thief"}`)}
         >
             <MaterialCommunityIcons name={props.icon} size={30} color={`${isEnabled ? "white" : "black"}`} />
             <View className="mt-[20%]">
