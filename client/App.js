@@ -1,5 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AuthProvider from './context/AuthProvider'
 import Home from './screens/Home';
 import Login from './screens/Login';
 import OnBoard from './screens/OnBoard';
@@ -10,7 +11,6 @@ import Fan from './screens/Fan';
 import LightItemDetail from './screens/LightItemDetail';
 import FanItemDetail from './screens/FanItemDetail';
 import { useFonts } from 'expo-font'; 
-
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -23,18 +23,20 @@ export default function App() {
   })
   if (!fontLoaded) return null;
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="OnBoard" component={OnBoard} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name='Register' component={Register} />
-        <Stack.Screen name='Setting' component={Setting} />
-        <Stack.Screen name='Light' component={Light} />
-        <Stack.Screen name='Fan' component={Fan} />
-        <Stack.Screen name='LightItemDetail' component={LightItemDetail} />
-        <Stack.Screen name='FanItemDetail' component={FanItemDetail} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AuthProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="OnBoard" component={OnBoard} />
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name='Register' component={Register} />
+          <Stack.Screen name='Setting' component={Setting} />
+          <Stack.Screen name='Light' component={Light} />
+          <Stack.Screen name='Fan' component={Fan} />
+          <Stack.Screen name='LightItemDetail' component={LightItemDetail} />
+          <Stack.Screen name='FanItemDetail' component={FanItemDetail} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AuthProvider>
   );
 }

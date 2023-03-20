@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import { Text, View, Switch, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import {updateStatusAll} from '../hooks/useDevice'
 
 export default function Device({props}) {
     const [isEnabled, setIsEnabled] = useState(props.enabled);
@@ -22,7 +23,7 @@ export default function Device({props}) {
                     thumbColor={'#F4FAFF'}
                     onValueChange={() => {
                         setIsEnabled(previousState => !previousState)
-                        //change on/off of device in server
+                        updateStatusAll(props.type)
                     }}
                     value={isEnabled}
                 />

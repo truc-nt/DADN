@@ -1,9 +1,11 @@
 import { Text, View, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import useAuth from '../hooks/useAuth'
 
 export default function Profile() {
     const navigation = useNavigation();
+    const {auth, setAuth} = useAuth()
     return (
         <View className="flex-row py-[2%] h-[15%] w-[100%] items-center">
             <Image 
@@ -11,7 +13,7 @@ export default function Profile() {
                 className="w-[60px] h-[60px]"
             ></Image>
             <View className="flex-col pl-[7%]">
-                <Text style={{fontFamily: "LexendBold"}} className="text-[20px] leading-[21px]" >Hi Fic Human</Text>
+                <Text style={{fontFamily: "LexendBold"}} className="text-[20px] leading-[21px]" >Hi {auth.username}</Text>
                 <Text style={{fontFamily: "LexendRegular"}} className="text-[14px] leading-[21px]">{new Date().toDateString()}</Text>
                 <Text style={{fontFamily: "LexendRegular"}} className="text-[14px] leading-[21px]">Căn hộ fiction</Text>
             </View>

@@ -2,11 +2,28 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useLayoutEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
+import useAuth from '../hooks/useAuth'
 import Input from '../components/Input';
 import axios from '../api/axios'
+import {login} from '../screens/Login'
 
+const register = async (navigation, setAuth, username, password, repwd, APIKey) => {
+    try {
+        const res = await axios.post('/auth/register', 
+            JSON.stringify({username, password, repwd, APIKey}), 
+            {
+                headers: {'Content-Type': 'application/json'},
+                withCredentials: true
+            })
+        if (res.data.success) {
+            login(navigation, setAuth, username, password)
+        }
+    } catch (err) {
+        console.log(err)
+    }
+}
 const Register = ({navigation}) => {
-
+    const {auth, setAuth} = useAuth()
     useLayoutEffect(() => {
         navigation.setOptions({
           headerShown: false,
@@ -17,31 +34,6 @@ const Register = ({navigation}) => {
     const [pwd, setPwd] = useState("")
     const [repwd, setRepwd] = useState("")
     const [APIKey, setAPIKey] = useState("")
-
-    const register = async () => {
-        /*axios.get(`http://10.0.2.2:3000/`)
-        .then((res) => {
-            console.log("hi")
-            console.log(res)   
-        })
-        .catch((err) => console.log(err))*/
-        try {
-            console.log(user, pwd, repwd, APIKey)
-            const res = await axios.post('/auth/register', {
-                'username': user,
-                'password': pwd,
-                'repwd': repwd,
-                'APIKey': APIKey,
-            }, 
-            {
-                'Content-Type': 'application/json',
-                withCredentials: true
-            })
-            console.log(res.data)
-        } catch (err) {
-            console.log(err)
-        }
-    }
 
     return (
         <SafeAreaView className="flex-1 bg-lightblue relative px-[8%] items-center">
@@ -92,7 +84,7 @@ const Register = ({navigation}) => {
             </View>
             <View className="flex-row justify-center h-[17%] items-center ">
                 <TouchableOpacity className="rounded-[50px] bg-white items-center justify-center border-[3px] w-[141px] h-[49px]"
-                    onPress={() => register()}
+                    onPress={() => register(navigation, setAuth, user, pwd, repwd, APIKey)}
                 >
                     <Text style={{fontFamily: "LexendSemiBold"}} className="text-[20px] leading-[30px] text-black">Register</Text>
                 </TouchableOpacity>

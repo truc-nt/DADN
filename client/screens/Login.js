@@ -2,12 +2,30 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useLayoutEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
+import useAuth from '../hooks/useAuth'
 import Input from '../components/Input';
+import axios from '../api/axios'
 
-import axios from 'axios'
+export const login = async (navigation, setAuth, username, password) => {
+    try {
+        const res = await axios.post('/auth/login', 
+            JSON.stringify({username, password}),
+            {
+                headers: {'Content-Type': 'application/json'},
+                withCredentials: true
+            })
+        console.log(res.data)
+        if (res.data.success) {
+            await setAuth(res.data.user)
+            navigation.navigate("Home")
+        }
+    } catch (err) {
+        console.log(err)
+    }
+}
 
 const Login = ({navigation}) => {
-
+    const {auth, setAuth} = useAuth()
     useLayoutEffect(() => {
         navigation.setOptions({
           headerShown: false,
@@ -16,22 +34,6 @@ const Login = ({navigation}) => {
 
     const [user, setUser] = useState("")
     const [pwd, setPwd] = useState("")
-
-    const login = async () => {
-        try {
-            const res = await axios.post('http://192.168.1.8:3000/auth/login', {
-                'username': user,
-                'password': pwd,
-            }, 
-            {
-                'Content-Type': 'application/json',
-                withCredentials: true
-            })
-            console.log(res.data)
-        } catch (err) {
-            console.log(err)
-        }
-    }
 
     return (
         <SafeAreaView className="flex-1 bg-lightblue relative px-[8%] items-center" >
@@ -66,7 +68,9 @@ const Login = ({navigation}) => {
             </View>
             <View className="flex-row justify-center h-[20%] items-center">
                 <TouchableOpacity className="rounded-[50px] bg-black items-center justify-center w-[141px] h-[49px] mt-[10%]" 
-                    onPress={() => login()}
+                    onPress={() => 
+                        res = login(navigation, setAuth, user, pwd)
+                    }
                 >
                     <Text style={{fontFamily: "LexendSemiBold"}} className="text-[20px] leading-[30px] text-white text-center">Log in</Text>
                 </TouchableOpacity>
