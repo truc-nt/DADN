@@ -6,11 +6,11 @@ import React, { useLayoutEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Weather = () => (
-    <View className="flex-row h-[120px] w-[100%] rounded-[20px] bg-blue items-center justify-between px-[5%]">
+    <View className="flex-row h-[130px] w-[100%] rounded-[20px] bg-blue items-center justify-between px-[5%] my-[10px]">
         <View className="flex-col">
-            <Text style={{fontFamily: 'LexendMedium'}} className={`text-[14px] leading-[21px]`}>Trời nhiều mây</Text>
+            <Text style={{fontFamily: 'LexendMedium'}} className={`text-[14px]`}>Trời nhiều mây</Text>
             <Text style={{fontFamily: 'LexendSemiBold'}} className={`text-[25px]`}>31'C</Text>
-            <Text style={{fontFamily: 'LexendRegular'}} className={`text-[12px] leading-[21px]`}>Độ ẩm 52%</Text>
+            <Text style={{fontFamily: 'LexendRegular'}} className={`text-[12px]`}>Độ ẩm 52%</Text>
         </View>
         <View>
             <Image 
@@ -57,8 +57,8 @@ export default function Home({navigation}) {
         <View className="h-[75%] w-[100%]">
             <ScrollView>
                 <Weather></Weather>
-                <View className="h-[45px] justify-end">
-                    <Text style = {{fontFamily: "LexendRegular"}} className={`text-[18px] leading-[27px]`}>Các thiết bị kết nối</Text>
+                <View className="h-[50px] justify-center">
+                    <Text style = {{fontFamily: "LexendRegular"}} className={`text-[18px] leading-[27px]`}>Các thiết bị kết nối:</Text>
                 </View>
                 <View className="flex-row flex-wrap justify-between w-[100%]">
                     {

@@ -1,7 +1,7 @@
 import { View, Modal, TextInput, TouchableOpacity, Text } from 'react-native'
 import React, { useState } from 'react'
 
-const MyModal = (props) => {
+const TextChangeModal = (props) => {
   const [text, setText] = useState(props.text)
 
   return (
@@ -35,4 +35,4 @@ const MyModal = (props) => {
   )
 }
 
-export default MyModal
+export default TextChangeModal
