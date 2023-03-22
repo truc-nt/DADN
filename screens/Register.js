@@ -64,7 +64,7 @@ const Register = ({navigation}) => {
             </View>
             <View className="flex-row justify-center items-center ">
                 <TouchableOpacity className="rounded-[50px] bg-white justify-center border-[3px] w-[141px] h-[49px]"
-                    onPress={() => navigation.navigate("Register")}
+                    onPress={() => navigation.navigate("RegisterSuccess")}
                 >
                     <Text style={{fontFamily: "LexendSemiBold"}} className="text-[20px] leading-[30px] text-black text-center">Register</Text>
                 </TouchableOpacity>

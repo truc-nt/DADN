@@ -53,7 +53,7 @@ export default function Home({navigation}) {
     ]
   return (
     <SafeAreaView className="flex-1 bg-lightblue relative px-[5%]">
-        <Profile />
+        <Profile navigation={navigation} />
         <View className="h-[75%] w-[100%]">
             <ScrollView>
                 <Weather></Weather>

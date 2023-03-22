@@ -53,7 +53,7 @@ const OnOffDeviceDetail = (props) => {
                 <ScrollView>
                     <View className="flex-row w-[100%] h-[65px] bg-semiblue rounded-[20px] items-center px-[5%] mb-[25px]">
                         <View className="flex-row w-[70%] items-center">
-                            <Text numberOfLines={1} style={{fontFamily: "LexendSemiBold"}} className="text-[22px] pr-[2%]">{name}</Text>
+                            <Text numberOfLines={1} style={{fontFamily: "LexendSemiBold"}} className="text-[22px] pr-[10px]">{name}</Text>
                             <TouchableOpacity
                                 onPress={()=>setModalName(true)}
                             >

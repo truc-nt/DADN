@@ -10,6 +10,7 @@ import Fan from './screens/Fan';
 import Thief from './screens/Thief';
 import LightItemDetail from './screens/LightItemDetail';
 import FanItemDetail from './screens/FanItemDetail';
+import RegisterSuccess from './screens/RegisterSuccess';
 import { useFonts } from 'expo-font'; 
 
 const Stack = createNativeStackNavigator();
@@ -36,6 +37,7 @@ export default function App() {
         <Stack.Screen name='Thief' component={Thief} />
         <Stack.Screen name='LightItemDetail' component={LightItemDetail} />
         <Stack.Screen name='FanItemDetail' component={FanItemDetail} />
+        <Stack.Screen name='RegisterSuccess' component={RegisterSuccess} />
       </Stack.Navigator>
     </NavigationContainer>
   );
