@@ -9,7 +9,7 @@ const Weather = () => (
     <View className="flex-row h-[130px] w-[100%] rounded-[20px] bg-blue items-center justify-between px-[5%] my-[10px]">
         <View className="flex-col">
             <Text style={{fontFamily: 'LexendMedium'}} className={`text-[14px]`}>Trời nhiều mây</Text>
-            <Text style={{fontFamily: 'LexendSemiBold'}} className={`text-[25px]`}>31'C</Text>
+            <Text style={{fontFamily: 'LexendSemiBold'}} className={`text-[25px]`}>31°C</Text>
             <Text style={{fontFamily: 'LexendRegular'}} className={`text-[12px]`}>Độ ẩm 52%</Text>
         </View>
         <View>

@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 export default function Profile() {
     const navigation = useNavigation();
     return (
-        <View className="flex-row py-[2%] h-[15%] w-[100%] items-center">
+        <View className="flex-row pt-[15px] h-[120px] w-[100%] items-center">
             <Image 
                 source={require('../assets/image/Profile.png')}
                 className="w-[60px] h-[60px]"
