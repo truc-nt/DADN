@@ -1,7 +1,10 @@
 import React, { useLayoutEffect } from 'react';
 import OnOffDevice from "../components/OnOffDevice";
 
+import {useGetAll} from '../hooks/useDevice'
+
 const Light = ({navigation}) => {
+  const {list} = useGetAll("light")
   
   useLayoutEffect(() => {
       navigation.setOptions({
@@ -10,7 +13,7 @@ const Light = ({navigation}) => {
   }, [])
 
   return (
-    <OnOffDevice light />
+    <OnOffDevice list = {list}/>
   )
 }
 

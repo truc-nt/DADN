@@ -7,10 +7,10 @@ const LightItemDetail = ({route, navigation}) => {
       headerShown: false,
     })
   }, [])
-  const {id} = route.params
+  const {id, detail} = route.params
 
   return (
-    <OnOffDeviceDetail light id={parseInt(JSON.stringify(id))}/>
+    <OnOffDeviceDetail light detail = {detail}/>
   )
 }
 

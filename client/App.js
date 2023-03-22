@@ -8,9 +8,13 @@ import Register from './screens/Register';
 import Setting from './screens/Setting';
 import Light from './screens/Light';
 import Fan from './screens/Fan';
+import Siren from './screens/Siren';
 import LightItemDetail from './screens/LightItemDetail';
 import FanItemDetail from './screens/FanItemDetail';
 import { useFonts } from 'expo-font'; 
+
+import useAuth from './hooks/useAuth'
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -21,22 +25,38 @@ export default function App() {
     LexendBold: require("./assets/font/static/Lexend-Bold.ttf"),
     LexendMedium: require("./assets/font/static/Lexend-Medium.ttf"),
   })
+
   if (!fontLoaded) return null;
   return (
     <AuthProvider>
       <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="OnBoard" component={OnBoard} />
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Home" component={Home} />
-          <Stack.Screen name='Register' component={Register} />
-          <Stack.Screen name='Setting' component={Setting} />
-          <Stack.Screen name='Light' component={Light} />
-          <Stack.Screen name='Fan' component={Fan} />
-          <Stack.Screen name='LightItemDetail' component={LightItemDetail} />
-          <Stack.Screen name='FanItemDetail' component={FanItemDetail} />
-        </Stack.Navigator>
+        <MainNavigation></MainNavigation>
       </NavigationContainer>
     </AuthProvider>
   );
+}
+
+const MainNavigation = () => {
+  const {auth} = useAuth()
+  return (
+    <Stack.Navigator>
+      {!auth?.username ? (
+        <>
+          <Stack.Screen name="OnBoard" component={OnBoard} />
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name='Register' component={Register} />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name='Setting' component={Setting} />
+          <Stack.Screen name='Light' component={Light} />
+          <Stack.Screen name='Fan' component={Fan} />
+          <Stack.Screen name='Siren' component={Siren} />
+          <Stack.Screen name='LightItemDetail' component={LightItemDetail} />
+          <Stack.Screen name='FanItemDetail' component={FanItemDetail} />
+        </>
+      )}
+    </Stack.Navigator>
+  )
 }

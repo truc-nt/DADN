@@ -5,7 +5,7 @@ import useAuth from '../hooks/useAuth'
 
 export default function Profile() {
     const navigation = useNavigation();
-    const {auth, setAuth} = useAuth()
+    const {auth} = useAuth()
     return (
         <View className="flex-row py-[2%] h-[15%] w-[100%] items-center">
             <Image 

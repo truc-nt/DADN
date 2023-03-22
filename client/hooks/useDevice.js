@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
-import axios from '../api/axios'
-import useAuth from './useAuth'
 
-const useGetAmount = (device) => {
-    const [amount, setAmount] = useState()
-    const {auth, setAuth} = useAuth({})
+import useAxiosPrivate from './useAxiosPrivate'
+
+export const useGetAmount = (type) => {
+    const [amount, setAmount] = useState({})
+    const axiosPrivate = useAxiosPrivate()
     useEffect(() => {
         let isMounted = true;
         const controller = new AbortController();
         const getAmount = async () => {
             try {
-                const res = await axios.get(`device/amount/${device}`, 
+                const res = await axiosPrivate.get(`devices/amount/${type}`, 
                 {
-                    headers: { authorization: `JWT ${auth.accessToken}`},
                     signal: controller.signal,
                 })
                 isMounted && setAmount(res.data)
@@ -21,25 +20,41 @@ const useGetAmount = (device) => {
             }
         }
         getAmount()
+        
+        return () => {
+            isMounted = false;
+            controller.abort();
+        }
     }, [])
     return amount
 }
 
-export const updateStatusAll = async (device, status) => {
-    try {
-        const res = await axios.post(`device/status/${device}`, 
-            {
-                status: status,
-            }, 
-            {
-                'Content-Type': 'application/json',
-                withCredentials: true
-            },
-        )
-        console.log("hi")
-    } catch (err) {
-        console.log(err.status)
-    }
-}
+export const useGetAll = (type) => {
+    const [list, setList] = useState({})
+    const axiosPrivate = useAxiosPrivate()
+    useEffect(() => {
+        let isMounted = true;
+        const controller = new AbortController();
+        const getList = async () => {
+            try {
+                const res = await axiosPrivate.get(`devices/all/${type}`, 
+                {
+                    signal: controller.signal,
+                })
 
-export default useGetAmount
+                isMounted && setList(res.data)
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        getList()
+
+        return () => {
+            isMounted = false;
+            controller.abort();
+        }
+    }, [])
+    return list
+}    
+
+//export default useGetAmount

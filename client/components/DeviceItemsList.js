@@ -1,33 +1,44 @@
 import { View, Text, Switch, ScrollView, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
+import useAxiosPrivate from '../hooks/useAxiosPrivate'
 
 const DeviceItem = (props) => {
-    const [isEnabled, setIsEnabled] = useState(props.on);
-    const [control, setControl] = useState(props.control);
+    const {item} = props
+    const [isEnabled, setIsEnabled] = useState(item.status);
+    const [mode, setMode] = useState(item?.mode);
     const navigation = useNavigation();
+
+    const axiosPrivate = useAxiosPrivate()
+    const updateStatus = async (type, id) => {
+        try {
+            const res = await axiosPrivate.put(`devices/status/${type}/${id}`)
+            console.log(res.data)
+        } catch (err) {
+            console.log(err.status)
+        }
+    }
 
     return (
         <TouchableOpacity className={`flex mx-[22px] py-[15px] ${props.border?"border-b-[1px]":""} h-[90px]`}
-            onPress={() => navigation.navigate(props.light?"LightItemDetail":"FanItemDetail", {id: props.id})}
+            onPress={() => navigation.navigate(`${item?.type[0].toUpperCase() + item?.type?.slice(1)}ItemDetail`, {id: item._id, detail: item})}
         >
             <View className="flex-row justify-between items-center">
-                <Text style={{fontFamily: "LexendSemiBold"}} className="text-[17px] leading-[21px]">{props.name}</Text>
+                <Text style={{fontFamily: "LexendMedium"}} className="text-[20px] leading-[21px]">{item.name}</Text>
                 <Switch
-                    trackColor={{false: '#DAE9F6', true: '#5AC2DA'}}
+                    trackColor={{false: 'white', true: '#5AC2DA'}}
                     thumbColor={'#F4FAFF'}
                     onValueChange={() => {
-                        setControl(1);
+                        setMode("Thủ công");
+                        updateStatus(item.type, item._id)
                         setIsEnabled(previousState => !previousState);
-                        //change on/off of device in server
-                        //change control
                     }}
                     value={isEnabled}
                 />
             </View>
             <View className="flex-row justify-between">
-                <Text style={{fontFamily: "LexendRegular"}} className="text-[13px] leading-[21px] text-grey">{props.pos}</Text>
-                <Text style={{fontFamily: "LexendRegular"}} className="text-[13px] leading-[21px] text-grey">{control?"Bằng tay":"Tự động"}</Text>
+                <Text style={{fontFamily: "LexendRegular"}} className="text-[13px] leading-[21px] text-grey">{item.position}</Text>
+                <Text style={{fontFamily: "LexendRegular"}} className="text-[13px] leading-[21px] text-grey">{mode}</Text>
             </View>
         </TouchableOpacity>
     )
@@ -35,18 +46,12 @@ const DeviceItem = (props) => {
 
 const DeviceItemsList = (props) => {
   return (
-    <View className="h-[80%] w-[100%]">
+    <View className="h-[77%] w-[100%]">
         <ScrollView className="w-[100%] bg-semiblue rounded-[20px]">
-            {props.devicesList.map((device, index) => 
-                <DeviceItem 
-                    id = {device.id}
-                    light = {props.light}
-                    pos = {device.pos}
-                    control = {device.control}
-                    on = {device.on}
-                    border = {index == props.devicesList.length?false:true}
-                    name = {device.name}
-                    key = {index}
+            {props?.devicesList?.map((device, index) => 
+                <DeviceItem  key = {index}
+                    item = {device}
+                    border = {index == props.devicesList.length-1?false:true}
                 />
             )} 
         </ScrollView> 

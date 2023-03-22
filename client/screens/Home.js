@@ -1,13 +1,15 @@
-import { Text, View, ScrollView, Image } from 'react-native';
+import { Text, View, ScrollView, Image, TouchableOpacity } from 'react-native';
 import Profile from '../components/Profile';
 import Device from '../components/Device';
 import NavBar from '../components/NavBar';
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { NavigationContainer,useFocusEffect, useIsFocused} from '@react-navigation/native';
 
 import useTemp from '../hooks/useTemp'
 import useHumid from '../hooks/useHumid'
-import useGetAmount from '../hooks/useDevice'
+import {useGetAmount} from '../hooks/useDevice'
+import useAxiosPrivate from '../hooks/useAxiosPrivate'
 
 const Weather = () => {
     const temp = useTemp()
@@ -29,12 +31,20 @@ const Weather = () => {
     )
 }
 
+const DevicesList = ({devices}) => (
+    <>
+        {console.log(devices)}
+        {
+            
+            devices?.map((device, index) => (
+                <Device key={index} props={device}></Device>
+            ))
+        }
+    </>
+)
+
 export default function Home({navigation}) {
-    useLayoutEffect(() => {
-        navigation.setOptions({
-          headerShown: false,
-        })
-    }, [])
+    const axiosPrivate = useAxiosPrivate()
 
     let devices = [
         {
@@ -54,13 +64,108 @@ export default function Home({navigation}) {
         },
     ]
 
+    useLayoutEffect(() => {
+        navigation.setOptions({
+          headerShown: false,
+        })
+    }, [])
+
     devices.forEach((device, index) => {
         const res = useGetAmount(device.type)
+        console.log(res?.amount, res?.status)
         if (res) {
-            devices[index].amount = res.amount
-            devices[index].enabled = res.status
+            devices[index].amount = res?.amount
+            devices[index].enabled = res?.status
         }
     })
+
+    /*useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', async () => {
+            try {
+                let temp = devices
+                console.log(temp)
+                temp = devices.map((device, index) => {
+                    const get = async () => {
+                        const res = await axiosPrivate.get(`devices/amount/${device.type}`)
+                        console.log({...device}, res.data, temp)
+                        if (res.data) {
+                            const {amount, status} = res.data.amount
+                            return {...device, amount: amount, enabled: status}
+                        }
+                        else return temp
+
+                    }
+                    
+                })
+                setDevices(temp)
+                //isMounted && setDevices(temp);
+            } catch (err) {
+                console.log(err)
+            }
+        })
+
+        return unsubscribe
+    }, [navigation])
+
+    /*useFocusEffect(
+        React.useCallback(() => {
+            let isMounted = true
+            const controller = new AbortController();
+        
+            const getAmount = async () => {
+                try {
+                    let temp = devices
+                    devices.forEach(async (device, index) => {
+                        const res = await axiosPrivate.get(`devices/amount/${device.type}`, 
+                        {
+                            signal: controller.signal,
+                        })
+                        if (res.data) {
+                            temp[index].amount = res.data.amount
+                            temp[index].enabled = res.data.status
+                        }
+                    })
+                    isMounted && setDevices(temp);
+                } catch (err) {
+                    console.log(err)
+                }
+            }
+            getAmount()
+
+            return () => {
+                isMounted = false;
+                controller.abort();
+            }
+        },[devices])
+    )
+
+    useEffect(() => {
+        console.log('f', isFocused)
+        if (isFocused) {
+            const getAmount = async () => {
+                try {
+                    let temp = devices
+                    devices.forEach(async (device, index) => {
+                        const res = await axiosPrivate.get(`devices/amount/${device.type}`, 
+                        {
+                            //signal: controller.signal,
+                        })
+                        if (res.data) {
+                            temp[index].amount = res.data.amount
+                            temp[index].enabled = res.data.status
+                        }
+                    })
+                    console.log(temp)
+                    setDevices(temp);
+                } catch (err) {
+                    console.log(err)
+                }
+            }
+            getAmount()
+        }
+    }, [isFocused])*/
+
+    console.log('help1')
   return (
     <SafeAreaView className="flex-1 bg-lightblue relative px-[5%]">
         <Profile />
@@ -72,9 +177,9 @@ export default function Home({navigation}) {
                 </View>
                 <View className="flex-row flex-wrap justify-between w-[100%]">
                     {
-                        devices.map((device, index) => (
-                            device?.amount && <Device key={index} props={device}></Device>
-                        ))
+                            devices.map((device, index) => (
+                                device?.amount && <Device key={index} props={device}></Device>
+                            ))
                     }
                 </View>
             </ScrollView>

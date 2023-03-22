@@ -6,18 +6,14 @@ import useAuth from '../hooks/useAuth'
 import Input from '../components/Input';
 import axios from '../api/axios'
 
-export const login = async (navigation, setAuth, username, password) => {
+export const login = async (setAuth, username, password) => {
     try {
-        const res = await axios.post('/auth/login', 
+        const res = await axios.post('/login', 
             JSON.stringify({username, password}),
-            {
-                headers: {'Content-Type': 'application/json'},
-                withCredentials: true
-            })
-        console.log(res.data)
+        )
         if (res.data.success) {
+            console.log(res.data)
             await setAuth(res.data.user)
-            navigation.navigate("Home")
         }
     } catch (err) {
         console.log(err)
@@ -25,7 +21,7 @@ export const login = async (navigation, setAuth, username, password) => {
 }
 
 const Login = ({navigation}) => {
-    const {auth, setAuth} = useAuth()
+    const {setAuth} = useAuth()
     useLayoutEffect(() => {
         navigation.setOptions({
           headerShown: false,
@@ -68,9 +64,7 @@ const Login = ({navigation}) => {
             </View>
             <View className="flex-row justify-center h-[20%] items-center">
                 <TouchableOpacity className="rounded-[50px] bg-black items-center justify-center w-[141px] h-[49px] mt-[10%]" 
-                    onPress={() => 
-                        res = login(navigation, setAuth, user, pwd)
-                    }
+                    onPress={() => login(setAuth, user, pwd)}
                 >
                     <Text style={{fontFamily: "LexendSemiBold"}} className="text-[20px] leading-[30px] text-white text-center">Log in</Text>
                 </TouchableOpacity>

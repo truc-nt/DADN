@@ -7,16 +7,17 @@ import Input from '../components/Input';
 import axios from '../api/axios'
 import {login} from '../screens/Login'
 
-const register = async (navigation, setAuth, username, password, repwd, APIKey) => {
+const register = async (setAuth, username, password, repwd, APIKey) => {
     try {
-        const res = await axios.post('/auth/register', 
+        const res = await axios.post('/register', 
             JSON.stringify({username, password, repwd, APIKey}), 
             {
                 headers: {'Content-Type': 'application/json'},
                 withCredentials: true
             })
+        console.log('register')
         if (res.data.success) {
-            login(navigation, setAuth, username, password)
+            login(setAuth, username, password)
         }
     } catch (err) {
         console.log(err)
@@ -84,7 +85,7 @@ const Register = ({navigation}) => {
             </View>
             <View className="flex-row justify-center h-[17%] items-center ">
                 <TouchableOpacity className="rounded-[50px] bg-white items-center justify-center border-[3px] w-[141px] h-[49px]"
-                    onPress={() => register(navigation, setAuth, user, pwd, repwd, APIKey)}
+                    onPress={() => register(setAuth, user, pwd, repwd, APIKey)}
                 >
                     <Text style={{fontFamily: "LexendSemiBold"}} className="text-[20px] leading-[30px] text-black">Register</Text>
                 </TouchableOpacity>
