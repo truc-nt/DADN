@@ -8,7 +8,7 @@ const DeviceItem = (props) => {
     const navigation = useNavigation();
 
     return (
-        <TouchableOpacity className={`flex mx-[22px] py-[15px] ${props.border?"border-b-[1px]":""} h-[90px]`}
+        <TouchableOpacity className={`flex mx-[22px] py-[10px] ${props.border?"border-b-[1px]":""} h-[100px]`}
             onPress={() => navigation.navigate(props.light?"LightItemDetail":"FanItemDetail", {id: props.id})}
         >
             <View className="flex-row justify-between items-center">
@@ -35,20 +35,22 @@ const DeviceItem = (props) => {
 
 const DeviceItemsList = (props) => {
   return (
-    <View className="h-[77%] w-[100%]">
-        <ScrollView className="w-[100%] bg-semiblue rounded-[20px] ">
-            {props.devicesList.map((device, index) => 
-                <DeviceItem 
-                    id = {device.id}
-                    light = {props.light}
-                    pos = {device.pos}
-                    control = {device.control}
-                    on = {device.on}
-                    border = {index == props.devicesList.length-1?false:true}
-                    name = {device.name}
-                    key = {index}
-                />
-            )} 
+    <View className="h-[78%] w-[100%]">
+        <ScrollView className="w-[100%]">
+            <View className="w-[100%] bg-semiblue rounded-[20px]">
+                {props.devicesList.map((device, index) => 
+                    <DeviceItem 
+                        id = {device.id}
+                        light = {props.light}
+                        pos = {device.pos}
+                        control = {device.control}
+                        on = {device.on}
+                        border = {index == props.devicesList.length-1?false:true}
+                        name = {device.name}
+                        key = {index}
+                    />
+                )}
+            </View> 
         </ScrollView> 
     </View>
   )

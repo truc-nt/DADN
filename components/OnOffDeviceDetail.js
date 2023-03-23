@@ -39,17 +39,15 @@ const OnOffDeviceDetail = (props) => {
 
     return (
         <SafeAreaView className="flex-1 bg-lightblue relative px-[5%] items-center">
-            <View className="flex top-[58px] left-[5%] absolute">
+            <View className="flex-row w-[80%] h-[12%] justify-between items-center self-start">
                 <TouchableOpacity
                     onPress={() => navigation.goBack()}
                 >
                     <AntDesign name="left" size={35} color="black" />
                 </TouchableOpacity>
+                <Text style={{fontFamily: "LexendSemiBold"}} className="text-[30px] w-[75%] text-center">{name}</Text>
             </View>
-            <View className="flex-row w-[50%] h-[70px] justify-center mb-[5%]">
-                <Text numberOfLines={1} style={{fontFamily: "LexendSemiBold"}} className="text-[30px]">{name}</Text>
-            </View>
-            <View className="h-[77%] w-[100%]">
+            <View className="h-[78%] w-[100%]">
                 <ScrollView>
                     <View className="flex-row w-[100%] h-[65px] bg-semiblue rounded-[20px] items-center px-[5%] mb-[25px]">
                         <View className="flex-row w-[70%] items-center">

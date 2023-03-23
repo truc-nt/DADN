@@ -268,15 +268,13 @@ const OnOffDevice = (props) => {
     const navigation = useNavigation();
     return (
         <SafeAreaView className="flex-1 bg-lightblue relative px-[5%] items-center">
-            <View className="flex top-[58px] left-[5%] absolute">
+            <View className="flex-row w-[80%] h-[12%] justify-between items-center self-start">
                 <TouchableOpacity
                     onPress={() => navigation.goBack()}
                 >
                     <AntDesign name="left" size={35} color="black" />
                 </TouchableOpacity>
-            </View>
-            <View className="flex-row w-[50%] h-[70px] justify-center mb-[5%]">
-                <Text style={{fontFamily: "LexendSemiBold"}} className="text-[30px]">{props.light?"Đèn":"Quạt"}</Text>
+                <Text style={{fontFamily: "LexendSemiBold"}} className="text-[30px] w-[75%] text-center">{props.light?"Đèn":"Quạt"}</Text>
             </View>
             <DeviceItemsList devicesList={props.light?lightList:fanList} light={props.light}/>
             <NavBar />
