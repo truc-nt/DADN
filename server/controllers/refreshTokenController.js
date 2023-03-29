@@ -11,8 +11,9 @@ const handleReusedRefreshToken = async (err, decoded) => {
 
 const handleRefreshToken = async (req, res) => {
     const cookies = req.cookies
-    if (!cookies?.refreshToken) return res.status(401)
+    if (!cookies?.refreshToken) return res.sendStatus(401)
     const refreshToken = cookies.refreshToken
+    console.log('help')
     res.clearCookie('resfreshToken', { httpOnly: true, sameSite: 'None', secure: true })
 
     const user = await User.findOne({refreshToken})
@@ -20,12 +21,13 @@ const handleRefreshToken = async (req, res) => {
     // Detected refresh token reuse!
     if (!user) {
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, handleReusedRefreshToken)
-        return res.status(403)
+        return res.sendStatus(403)
     }
     
     const newRefreshTokenArray = user.refreshToken.filter(rt => rt !== refreshToken)
 
     //evaluate
+    console.log('hi')
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, decoded) => {
         if (err) {
             console.log('expired refresh token')

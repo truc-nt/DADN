@@ -3,7 +3,7 @@ import OnOffDevice from "../components/OnOffDevice";
 import { useGetAll } from '../hooks/useDevice';
 
 const Fan = ({navigation}) => {
-  const {list} = useGetAll("fan")
+  const {list, type} = useGetAll("fan")
   
   useLayoutEffect(() => {
       navigation.setOptions({
@@ -12,7 +12,7 @@ const Fan = ({navigation}) => {
   }, [])
 
   return (
-    <OnOffDevice list = {list} />
+    <OnOffDevice list = {list} type = {type}/>
   )
 }
 

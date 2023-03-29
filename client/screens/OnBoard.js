@@ -11,14 +11,12 @@ const OnBoard = ({navigation}) => {
     }, [])
 
     return (
-        <SafeAreaView className="flex-1 bg-lightblue relative px-[8%] items-center">
-            <View className="flex-row h-[7%] w-[100%]">
-                <Text style={{fontFamily: "LexendBold"}} className="text-[24px] leading-[28.8px]">Fiction Home</Text>
+        <SafeAreaView className="flex-col h-[100%] w-[100%] bg-lightblue relative px-[8%] pt-[10px] pb-[50px] items-center justify-between">
+            <View className="flex-row w-[100%]">
+                <Text style={{fontFamily: "LexendBold"}} className="text-[22px] leading-[28.8px]">Fiction Home</Text>
             </View>
-            <View className="flex-row w-[70%] justify-center h-[10%]">
-                <Text style={{fontFamily: "LexendBold"}}  className="text-[32px] leading-[28.8px] text-center ">Home of your imagination</Text>
-            </View>
-            <View className="flex-row w-[60%] justify-center h-[7%]">
+            <View className="flex-col w-[80%] justify-center">
+                <Text style={{fontFamily: "LexendBold"}}  className="text-[30px] leading-[28.8px] text-center ">Home of your imagination</Text>
                 <Text style={{fontFamily: "LexendExtraLight"}}  className="text-[16px] leading-[16px] text-center">Manage your home anywhere, anytime</Text>
             </View>
             <View className="flex-row justify-center h-[60%] w-[100%]">
@@ -27,16 +25,16 @@ const OnBoard = ({navigation}) => {
                     className="w-[100%] h-[100%]  rounded-t-[180px] rounded-b-[90px]"
                 />
             </View>
-            <View className="flex-row items-center justify-between h-[16%] w-[90%]">
-                <TouchableOpacity className="rounded-[50px] bg-black items-center justify-center w-[141px] h-[49px]" 
+            <View className="flex-row justify-between w-[90%]">
+                <TouchableOpacity className="rounded-[50px] bg-black w-[141px] h-[49px] justify-center" 
                     onPress={() => navigation.navigate("Login")}
                 >
-                    <Text style={{fontFamily: "LexendSemiBold"}} className="text-[20px] leading-[30px] text-white text-center">Log in</Text>
+                    <Text style={{fontFamily: "LexendSemiBold"}} className="text-[20px] text-white text-center">Log in</Text>
                 </TouchableOpacity>
-                <TouchableOpacity className="rounded-[50px] bg-white items-center justify-center border-[3px] w-[141px] h-[49px]"
+                <TouchableOpacity className="rounded-[50px] bg-white border-[3px] w-[141px] h-[49px] justify-center"
                     onPress={() => navigation.navigate("Register")}
                 >
-                    <Text style={{fontFamily: "LexendSemiBold"}} className="text-[20px] leading-[30px] text-black">Register</Text>
+                    <Text style={{fontFamily: "LexendSemiBold"}} className="text-[20px] text-center text-black">Register</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>

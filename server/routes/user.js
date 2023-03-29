@@ -3,7 +3,7 @@ const router = express.Router()
 
 const {verifyAccessToken} = require('../middlewares/authMiddleware')
 const {upload} = require('../middlewares/validation/image')
-const {handleChangeAvatar} = require('../controllers/UserController')
+const {handleChangeAvatar} = require('../controllers/userController')
 
 router.post('/avatar', verifyAccessToken, upload.single('avatar'), handleChangeAvatar)
 

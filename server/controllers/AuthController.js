@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/UserModel')
-const {handleAddDevices} = require('../controllers/DeviceController')
+const {handleAddDevices} = require('./deviceController')
 
 
 const handleRegister = async (req, res) => {
@@ -27,8 +27,7 @@ const handleRegister = async (req, res) => {
 }
 
 const generateNewAccessToken = (user) => {
-     //Payload
-    const newAccessToken = jwt.sign({_id: user._id}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '60s'}) 
+    const newAccessToken = jwt.sign({_id: user._id}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1d'}) 
     return newAccessToken
 }
 
@@ -52,14 +51,18 @@ const handleLogin = async (req, res) => {
     })
     
     const newRefreshToken = generateNewRefreshToken(user)
-    const newAccessToken = generateNewAccessToken(user)
+    
     const newRefreshTokenArray = cookies?.refreshToken ? user.refreshToken.filter(rt => rt !== cookies.refreshToken) : user.refreshToken
-    res.clearCookie('resfreshToken', { httpOnly: true, sameSite: 'None', secure: true })
+    
+    if (cookies?.refreshToken) {
+        res.clearCookie('resfreshToken', { httpOnly: true, sameSite: 'None', secure: true })
+    }
+
     res.cookie('refreshToken', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 })
     user.refreshToken = [...newRefreshTokenArray, newRefreshToken]
     await user.save()
 
-    res.json({
+    res.status(202).json({
         success: true,
         message: 'Login successfully!',
         user: {
@@ -67,9 +70,13 @@ const handleLogin = async (req, res) => {
             username: user.username,
             avatar: user.avatar,
             APIKey: user.APIKey,
+            accessToken: generateNewAccessToken(user)
         },
-        accessToken: newAccessToken
     })
 }
 
-module.exports = {handleRegister, handleLogin}
+const handleLogout = async (req, res) => {
+    res.send('hi')
+}
+
+module.exports = {handleRegister, handleLogin, handleLogout}

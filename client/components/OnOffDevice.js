@@ -12,11 +12,11 @@ const OnOffDevice = (props) => {
         fan: 'Quạt',
         siren: 'Chống trộm',
     }
-
+    
     const navigation = useNavigation();
     return (
         <SafeAreaView className="flex-1 bg-lightblue relative px-[5%] items-center">
-            <View className="flex top-[4.5%] left-[5%] absolute">
+            <View className="flex top-[58px] left-[5%] absolute">
                 <TouchableOpacity
                     onPress={() => navigation.goBack()}
                 >
@@ -24,7 +24,7 @@ const OnOffDevice = (props) => {
                 </TouchableOpacity>
             </View>
             <View className="flex-row w-[50%] h-[8%] justify-center mb-[5%]">
-                <Text style={{fontFamily: "LexendSemiBold"}} className="text-[30px]">{name[props?.list?.type]}</Text>
+                <Text style={{fontFamily: "LexendSemiBold"}} className="text-[30px]">{name[props?.type]}</Text>
             </View>
             <DeviceItemsList devicesList={props?.list}/>
             <NavBar />

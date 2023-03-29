@@ -6,8 +6,9 @@ import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import NavBar from './NavBar';
 import { Ionicons } from '@expo/vector-icons';
-import MyModal from './MyModal';
+import TextChangeModal from './TextChangeModal';
 import TimeArrange from './TimeArrange';
+import PercentageBar from './PercentageBar';
 
 import useAxiosPrivate from '../hooks/useAxiosPrivate'
 const OnOffDeviceDetail = (props) => {
@@ -34,34 +35,51 @@ const OnOffDeviceDetail = (props) => {
         }
     }
 
+    const changeColor = async (value) => {
+        try {
+            const res = await axiosPrivate.put(`lights/color/${props.detail._id}`, {value: value})
+            console.log(res.data)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const ledColor = ["red", "green", "blue", "orange"]
+
     const [name, setName] = useState(props.detail.name)
-    const [position, setPosition] = useState(props.detail.pos)
+    const [position, setPosition] = useState(props.detail.position)
     const [mode, setMode] = useState(props.detail.mode)
     const [isEnabled, setIsEnabled] = useState(props.detail.status)
     const [modalName, setModalName] = useState(false)
     const [modalPos, setModalPos] = useState(false) 
+    const [lightModal, setLightModal] = useState(false)
+    const [fanModal, setFanModal] = useState(false)
+    const [fanVal, setFanVal] = useState(props.detail.strength)
+    const [lightColor, setLightColor] = useState(props.detail.value)
 
     return (
         <SafeAreaView className="flex-1 bg-lightblue relative px-[5%] items-center">
-            <View className="flex top-[4.5%] left-[5%] absolute">
+            <View className="flex top-[58px] left-[5%] absolute">
                 <TouchableOpacity
                     onPress={() => navigation.goBack()}
                 >
                     <AntDesign name="left" size={35} color="black" />
                 </TouchableOpacity>
             </View>
-            <View className="flex-row w-[50%] h-[8%] justify-center mb-[5%]">
+            <View className="flex-row w-[50%] h-[70px] justify-center mb-[5%]">
                 <Text numberOfLines={1} style={{fontFamily: "LexendSemiBold"}} className="text-[30px]">{name}</Text>
             </View>
             <View className="h-[77%] w-[100%]">
                 <ScrollView>
                     <View className="flex-row w-[100%] h-[65px] bg-semiblue rounded-[20px] items-center px-[5%] mb-[25px]">
-                        <Text numberOfLines={1} style={{fontFamily: "LexendSemiBold"}} className="max-w-[40%] text-[20px] pr-[2%]">{name}</Text>
-                        <TouchableOpacity
-                            onPress={()=>setModalName(true)}
-                        >
-                            <Ionicons name="pencil" size={24} color="black" />
-                        </TouchableOpacity>
+                        <View className="flex-row w-[70%] items-center">
+                            <Text numberOfLines={1} style={{fontFamily: "LexendSemiBold"}} className="text-[22px] pr-[2%]">{name}</Text>
+                            <TouchableOpacity
+                                onPress={()=>setModalName(true)}
+                            >
+                                <Ionicons name="pencil" size={24} color="black" />
+                            </TouchableOpacity>
+                        </View>
                         <Switch
                             trackColor={{false: 'white', true: '#5AC2DA'}}
                             thumbColor={'#F4FAFF'}
@@ -76,23 +94,9 @@ const OnOffDeviceDetail = (props) => {
                             className="ml-[auto]"
                         />
                     </View>
-                    <MyModal 
-                        visible={modalName}
-                        setModal={setModalName}
-                        setText={setName}
-                        text={name}
-                        label="Tên thiết bị"
-                    />
-                    <MyModal 
-                        visible={modalPos}
-                        setModal={setModalPos}
-                        setText={setPosition}
-                        text={position}
-                        label="Vị trí thiết bị"
-                    />
                     <View className="w-[100%] bg-semiblue rounded-[20px] items-center px-[5%]  mb-[25px]">
                         <View className="flex-row w-[100%] justify-between h-[65px] items-center border-b-[1px]">
-                            <Text numberOfLines={1} style={{fontFamily: "LexendMedium"}} className="w-[60%] text-[17px]">Vị trí: {position}</Text>
+                            <Text numberOfLines={1} style={{fontFamily: "LexendMedium"}} className="w-[80%] text-[17px]">Vị trí: {position}</Text>
                             <TouchableOpacity
                                 onPress={()=>setModalPos(true)}
                             >
@@ -116,16 +120,54 @@ const OnOffDeviceDetail = (props) => {
                                 </Picker>    
                             </View>                       
                         </View>
-                        <TouchableOpacity className="flex-row w-[100%] justify-between h-[65px] items-center">
-                            <Text numberOfLines={1} style={{fontFamily: "LexendMedium"}} className="w-[60%] text-[17px]">{props?.detail?.type === "light"?"Màu sắc":"Tốc độ"}</Text>
-                            <TouchableOpacity
-                                onPress={()=>setModalPos(true)}
+                        {props?.detail?.type === "fan" && 
+                            <TouchableOpacity 
+                                className="flex-row w-[100%] justify-between h-[65px] items-center"
+                                onPress={()=>setFanModal(true)}
                             >
+                                <Text numberOfLines={1} style={{fontFamily: "LexendMedium"}} className="w-[60%] text-[17px]">{"Tốc độ: " + fanVal + '%'}</Text>
                                 <AntDesign name="right" size={24} color="black" />
-                            </TouchableOpacity>
-                        </TouchableOpacity>
+                            </TouchableOpacity>}
+                        {props?.detail?.type === "light" &&
+                            <View className="flex-row w-[100%] h-[65px] items-center">
+                                <Text numberOfLines={1} style={{fontFamily: "LexendMedium"}} className="text-[17px]">Màu sắc: </Text>
+                                <View className="flex-1">
+                                    <Picker
+                                        selectedValue={lightColor}
+                                        onValueChange={(itemValue, itemIndex) => {changeColor(itemValue); setLightColor(itemValue)}}
+                                        style={{fontFamily: "LexendBold", fontSize: 17, color: `${ledColor[lightColor-1]}`}}
+                                    >
+                                        <Picker.Item label="Đỏ" value={1} color="red"/>
+                                        <Picker.Item label="Xanh lá" value={2} color="green"/>
+                                        <Picker.Item label="Xanh biển" value={3} color="blue"/>
+                                        <Picker.Item label="Cam" value={4} color="orange"/>
+                                    </Picker>    
+                                </View>                       
+                            </View>
+                        }
                     </View>
                     <TimeArrange light={props.light?true:false} fan={props.fan?true:false} thief={props.thief?true:false} id={props.id}/>
+                    <TextChangeModal 
+                        visible={modalName}
+                        setModal={setModalName}
+                        setText={setName}
+                        text={name}
+                        label="Tên thiết bị"
+                    />
+                    <TextChangeModal 
+                        visible={modalPos}
+                        setModal={setModalPos}
+                        setText={setPosition}
+                        text={position}
+                        label="Vị trí thiết bị"
+                    />
+                    <PercentageBar 
+                        visible={fanModal}
+                        setModal={setFanModal}
+                        id={props.detail._id}
+                        setVal={setFanVal}
+                        strength={fanVal}
+                    />
                 </ScrollView>
             </View>
             <NavBar />

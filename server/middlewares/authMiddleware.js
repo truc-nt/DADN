@@ -6,7 +6,7 @@ exports.verifyAccessToken = async (req, res, next) => {
         if (req?.headers?.authorization) {
             const accessToken = req.headers.authorization.split(' ')[1]
             const decode = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET)
-            const user = await User.findById(decode.id)
+            const user = await User.findById(decode._id)
             if (!user) return res.status(401).json({
                 success: false,
                 message: 'Unathorized'
@@ -14,18 +14,18 @@ exports.verifyAccessToken = async (req, res, next) => {
             req.user = user
             next()
         } else {
-            res.status(401).json({
+            res.json({
                 success: false,
                 message: 'Unathorized'
             })
         }
     } catch (err) {
         if (err.name === 'JsonWebTokenError') 
-            return res.status(401).json({
+            res.status(401).json({
                 success: false,
                 message: 'Unathorized'
             })
-        if (err.name === 'TokenExpiredError') return
+        if (err.name === 'TokenExpiredError')
             res.json({
                 success: false,
                 message: 'Session expired! Try login again'

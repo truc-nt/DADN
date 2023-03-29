@@ -30,7 +30,7 @@ const DeviceItem = (props) => {
                     thumbColor={'#F4FAFF'}
                     onValueChange={() => {
                         setMode("Thủ công");
-                        updateStatus(item.type, item._id)
+                        updateStatus(item?.type, item._id)
                         setIsEnabled(previousState => !previousState);
                     }}
                     value={isEnabled}

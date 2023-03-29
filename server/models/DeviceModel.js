@@ -11,7 +11,10 @@ const DeviceSchema = new mongoose.Schema({
         },
         position: {
             type: String,
-            default: ''
+            default: 'Vị trí'
+        },
+        status: {
+            type: Boolean,
         },
         userId: {
             type: mongoose.Schema.Types.ObjectId,

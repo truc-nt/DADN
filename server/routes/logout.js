@@ -1,9 +1,9 @@
 const express = require('express')
 const router = express.Router()
 
-const {handleChangeStatus} = require('../controllers/LightController')
 const {verifyAccessToken} = require('../middlewares/authMiddleware')
+const {handleLogout} = require('../controllers/authController')
 
-router.post('/status', verifyAccessToken, handleChangeStatus)
+router.post('/', verifyAccessToken, handleLogout)
 
 module.exports = router

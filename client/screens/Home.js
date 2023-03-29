@@ -6,6 +6,8 @@ import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationContainer,useFocusEffect, useIsFocused} from '@react-navigation/native';
 
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 import useTemp from '../hooks/useTemp'
 import useHumid from '../hooks/useHumid'
 import {useGetAmount} from '../hooks/useDevice'
@@ -18,7 +20,7 @@ const Weather = () => {
     <View className="flex-row h-[120px] w-[100%] rounded-[20px] bg-blue items-center justify-between px-[5%]">
         <View className="flex-col">
             <Text style={{fontFamily: 'LexendMedium'}} className={`text-[14px] leading-[21px]`}>Trời nhiều mây</Text>
-            <Text style={{fontFamily: 'LexendSemiBold'}} className={`text-[25px]`}>{temp}'C</Text>
+            <Text style={{fontFamily: 'LexendSemiBold'}} className={`text-[25px]`}>{temp}°C</Text>
             <Text style={{fontFamily: 'LexendRegular'}} className={`text-[12px] leading-[21px]`}>Độ ẩm {humid}%</Text>
         </View>
         <View>
@@ -72,12 +74,23 @@ export default function Home({navigation}) {
 
     devices.forEach((device, index) => {
         const res = useGetAmount(device.type)
-        console.log(res?.amount, res?.status)
         if (res) {
             devices[index].amount = res?.amount
             devices[index].enabled = res?.status
         }
     })
+
+    const getUser = async () => {
+        try {
+            let user = await AsyncStorage.getItem('user')
+            console.log(user)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    useEffect(() => {
+        getUser()
+    }, [])
 
     /*useEffect(() => {
         const unsubscribe = navigation.addListener('focus', async () => {
@@ -164,15 +177,13 @@ export default function Home({navigation}) {
             getAmount()
         }
     }, [isFocused])*/
-
-    console.log('help1')
   return (
     <SafeAreaView className="flex-1 bg-lightblue relative px-[5%]">
         <Profile />
         <View className="h-[75%] w-[100%]">
             <ScrollView>
                 <Weather></Weather>
-                <View className="h-[45px] justify-end">
+                <View className="h-[50px] justify-center">
                     <Text style = {{fontFamily: "LexendRegular"}} className={`text-[18px] leading-[27px]`}>Các thiết bị kết nối</Text>
                 </View>
                 <View className="flex-row flex-wrap justify-between w-[100%]">
