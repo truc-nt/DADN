@@ -17,13 +17,13 @@ const LightSchema = extendSchema(DeviceSchema, {
     { timestamps: true }
 )
 
-LightSchema.methods.changeStatus = async function(APIKey, status) {
+LightSchema.methods.changeStatus = async function(io_username, io_key, status) {
     try {
         if (status !== this.status) {
             const data = status && this.value > 0 ? this.value : status ? 4 : 0
-            await axios.post(`https://io.adafruit.com/api/v2/NhanHuynh/feeds/${this.key}/data?x-aio-key=${APIKey}`, {
+            /*await axios.post(`https://io.adafruit.com/api/v2/${io_username}/feeds/${this.key}/data?x-aio-key=${io_key}`, {
                 "value": data
-            })
+            })*/
             this.status = status
             this.value = data
         }
@@ -43,9 +43,9 @@ LightSchema.methods.changeMode = async function() {
     }
 }
 
-LightSchema.methods.changeColor = async function(APIKey, value) {
+LightSchema.methods.changeValue = async function(io_username, io_key, value) {
     try {
-        await axios.post(`https://io.adafruit.com/api/v2/NhanHuynh/feeds/${this.key}/data?x-aio-key=${APIKey}`, {
+        await axios.post(`https://io.adafruit.com/api/v2/${io_username}/feeds/${this.key}/data?x-aio-key=${io_key}`, {
                 "value": value
         })
         this.value = value

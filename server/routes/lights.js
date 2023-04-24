@@ -2,10 +2,10 @@ const express = require('express')
 const router = express.Router()
 
 const {verifyAccessToken} = require('../middlewares/authMiddleware')
-const {handleChangeColor} = require('../controllers/lightController')
+const {handleChangeValue} = require('../controllers/lightController')
 
 router.use(verifyAccessToken)
 
-router.put('/color/:id', handleChangeColor)
+router.put('/value/:id', handleChangeValue)
 
 module.exports = router

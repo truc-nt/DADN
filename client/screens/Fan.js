@@ -12,7 +12,7 @@ const Fan = ({navigation}) => {
   }, [])
 
   return (
-    <OnOffDevice list = {list} type = {type}/>
+    list && <OnOffDevice list = {list} type = {type}/>
   )
 }
 

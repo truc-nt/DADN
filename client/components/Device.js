@@ -1,18 +1,19 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { Text, View, Switch, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect} from '@react-navigation/native';
+
 import useAxiosPrivate from '../hooks/useAxiosPrivate'
 
-export default function Device({props}) {
-    const [isEnabled, setIsEnabled] = useState(props.enabled);
-    console.log(props.enabled)
+export default function Device({props}) {    
+    const [isEnabled, setIsEnabled] = useState(props.enabled)
     const navigation = useNavigation()
     const axiosPrivate = useAxiosPrivate()
 
-    const updateStatusAll = async (type, status) => {   
+    const updateStatusAll = async (type, status) => {        
         try {
-            await axiosPrivate.put(`devices/status/${type}`, 
+            await axiosPrivate.put(`devices/${type}/status`, 
                 {
                     status: status,
                 }, 
@@ -21,6 +22,17 @@ export default function Device({props}) {
             console.log(err)
         }
     }
+
+    useFocusEffect(
+        React.useCallback(() => {
+            console.log("HELL")
+            console.log(props.enabled)
+            //setIsEnabled(props.enabled)
+            return () => {
+
+            }
+        },[])
+    )
     
     return (
         <TouchableOpacity className={`rounded-[20px] ${isEnabled?"bg-blue":"bg-white"} px-[4%] py-[4%] w-[45%] my-[3%]`}

@@ -15,7 +15,12 @@ const UserSchema = new mongoose.Schema({
         avatar: {
             type: Buffer,
         },
-        APIKey: {
+        io_username: {
+            type: String,
+            required: true,
+            unique: true
+        },
+        io_key: {
             type: String,
             required: true,
             unique: true
@@ -37,15 +42,15 @@ UserSchema.statics.isValidUsername = async function(username) {
     }
 }
 
-UserSchema.statics.isValidAPIKey = async function(APIKey) {
-    if (!APIKey) throw new Error()
+UserSchema.statics.isValidAdafruitServer = async function(io_username, io_key) {
+    if (!io_key) throw new Error()
     try {
-        const result = await axios.get(`https://io.adafruit.com/api/v2/NhanHuynh/feeds?x-aio-key=${APIKey}`)
-        const user = await this.findOne({APIKey})
+        const result = await axios.get(`https://io.adafruit.com/api/v2/${io_username}/feeds?x-aio-key=${io_key}`)
+        const user = await this.findOne({io_key})
         if (user) return []
         return result.data
     } catch (err) {
-        console.log('error inside apikey in use', err.message)
+        console.log('error inside valid in use', err.message)
         return []
     }
 }

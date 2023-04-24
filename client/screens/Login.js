@@ -14,7 +14,7 @@ export const login = async (setAuth, username, password) => {
         )
         if (res.data.success) {
             console.log(res.data)
-            //await setAuth(res.data.user)
+            await setAuth(res.data.user)
             await AsyncStorage.setItem('user',  JSON.stringify(res.data.user))
         }
     } catch (err) {

@@ -45,18 +45,20 @@ const DeviceItem = (props) => {
 }
 
 const DeviceItemsList = (props) => {
-  return (
-    <View className="h-[77%] w-[100%]">
-        <ScrollView className="w-[100%] bg-semiblue rounded-[20px]">
-            {props?.devicesList?.map((device, index) => 
-                <DeviceItem  key = {index}
-                    item = {device}
-                    border = {index == props.devicesList.length-1?false:true}
-                />
-            )} 
-        </ScrollView> 
-    </View>
-  )
+    return (
+        <View className="h-[78%] w-[100%]">
+            <ScrollView className="w-[100%]">
+                <View className="w-[100%] bg-semiblue rounded-[20px]">
+                    {props?.devicesList?.map((device, index) => 
+                        <DeviceItem  key = {index}
+                            item = {device}
+                            border = {index == props.devicesList.length-1?false:true}
+                        />
+                    )} 
+                </View> 
+            </ScrollView> 
+        </View>
+    )
 }
 
 export default DeviceItemsList

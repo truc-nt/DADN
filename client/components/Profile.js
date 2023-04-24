@@ -6,24 +6,18 @@ import useAuth from '../hooks/useAuth'
 export default function Profile() {
     const navigation = useNavigation();
     const {auth} = useAuth()
+
     return (
-        <View className="flex-row py-[2%] h-[15%] w-[100%] items-center">
+        <TouchableOpacity className="flex-row pt-[15px] h-[15%] w-[100%] items-center" onPress={() => navigation.navigate("Setting")}>
             <Image 
                 source={require('../assets/image/Profile.png')}
-                className="w-[60px] h-[60px]"
+                className="w-[70px] h-[70px]"
             ></Image>
             <View className="flex-col pl-[7%]">
                 <Text style={{fontFamily: "LexendBold"}} className="text-[20px] leading-[21px]" >Hi {auth.username}</Text>
                 <Text style={{fontFamily: "LexendRegular"}} className="text-[14px] leading-[21px]">{new Date().toDateString()}</Text>
                 <Text style={{fontFamily: "LexendRegular"}} className="text-[14px] leading-[21px]">Căn hộ fiction</Text>
             </View>
-            <View className="ml-[auto]">
-                <TouchableOpacity
-                    onPress={() => navigation.navigate("Setting")}
-                >
-                    <Ionicons name="settings" size={26} color="#5AC2DA"/>
-                </TouchableOpacity>               
-            </View>
-        </View>
+        </TouchableOpacity>
     );
 }

@@ -7,14 +7,10 @@ import Input from '../components/Input';
 import axios from '../api/axios'
 import {login} from '../screens/Login'
 
-const register = async (setAuth, username, password, repwd, APIKey) => {
+const register = async (setAuth, username, password, repwd, io_username, io_key) => {
     try {
         const res = await axios.post('/register', 
-            JSON.stringify({username, password, repwd, APIKey}), 
-            {
-                headers: {'Content-Type': 'application/json'},
-                withCredentials: true
-            })
+            JSON.stringify({username, password, repwd, io_username, io_key}))
         console.log('register')
         if (res.data.success) {
             login(setAuth, username, password)
@@ -24,7 +20,7 @@ const register = async (setAuth, username, password, repwd, APIKey) => {
     }
 }
 const Register = ({navigation}) => {
-    const {auth, setAuth} = useAuth()
+    const {setAuth} = useAuth()
     useLayoutEffect(() => {
         navigation.setOptions({
           headerShown: false,
@@ -34,7 +30,8 @@ const Register = ({navigation}) => {
     const [user, setUser] = useState("")
     const [pwd, setPwd] = useState("")
     const [repwd, setRepwd] = useState("")
-    const [APIKey, setAPIKey] = useState("")
+    const [io_username, setIOUsername]  = useState("")
+    const [io_key, setIOKey] = useState("")
 
     return (
         <SafeAreaView className="flex-col h-[100%] w-[100%] bg-lightblue relative px-[8%] pt-[10px] pb-[50px] items-center justify-between" >
@@ -45,7 +42,7 @@ const Register = ({navigation}) => {
                 <Text style={{fontFamily: "LexendBold"}}  className="text-[30px] leading-[28.8px] text-center ">Home of your imagination</Text>
                 <Text style={{fontFamily: "LexendExtraLight"}}  className="text-[16px] leading-[16px] text-center">Manage your home anywhere, anytime</Text>
             </View>
-            <View className="h-[290px] w-[100%]">
+            <View className="h-[60%] w-[100%]">
                 <ScrollView className="w-[100%] bg-semiblue rounded-[20px]">
                     <Input
                         label={"Tên đăng nhập:"}
@@ -72,9 +69,16 @@ const Register = ({navigation}) => {
                         border={true}
                     />
                     <Input
+                        label={"Username (Adafruit Server):"}
+                        handleChange={(value) => setIOUsername(value)}
+                        value={io_username}
+                        placeholder={"Nhập username được cấp"}
+                        border={true}
+                    />
+                    <Input
                         label={"Mã API (Adafruit Server):"}
-                        handleChange={(value) => setAPIKey(value)}
-                        value={APIKey}
+                        handleChange={(value) => setIOKey(value)}
+                        value={io_key}
                         placeholder={"Nhập mã API của bạn"}
                         secureTextEntry={false}
                         border={false}
@@ -83,7 +87,7 @@ const Register = ({navigation}) => {
             </View>
             <View className="flex-row justify-center items-center ">
                 <TouchableOpacity className="rounded-[50px] bg-white justify-center border-[3px] w-[141px] h-[49px]"
-                    onPress={() => register(setAuth, user, pwd, repwd, APIKey)}
+                    onPress={() => register(setAuth, user, pwd, repwd, io_username, io_key)}
                 >
                     <Text style={{fontFamily: "LexendSemiBold"}} className="text-[20px] leading-[30px] text-black text-center">Register</Text>
                 </TouchableOpacity>

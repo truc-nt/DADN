@@ -1,32 +1,59 @@
-import { useEffect, useState } from "react";
-
+import { useState, useCallback, useEffect } from "react";
+import { useFocusEffect } from '@react-navigation/native';
 import useAxiosPrivate from './useAxiosPrivate'
 
-export const useGetAmount = (type) => {
-    const [amount, setAmount] = useState({})
+export const useGetDevices = () => {
     const axiosPrivate = useAxiosPrivate()
-    useEffect(() => {
-        let isMounted = true;
-        const controller = new AbortController();
-        const getAmount = async () => {
-            try {
-                const res = await axiosPrivate.get(`devices/amount/${type}`, 
-                {
-                    signal: controller.signal,
-                })
-                isMounted && setAmount(res.data)
-            } catch (err) {
-                console.log(err)
+    const [devices, setDevices] = useState([
+        {
+            'icon': "lightbulb-outline", 
+            'name': 'Đèn',
+            'type': 'light' 
+        },
+        {
+            'icon': "fan",
+            'name': 'Quạt',
+            'type': 'fan'
+        },
+        {
+            'icon': "bell-alert-outline",
+            'name': 'Chống trộm',
+            'type': 'siren'
+        },
+    ])
+
+    useFocusEffect(
+        useCallback(() => {
+            let isMounted = true
+            const controller = new AbortController()
+            const getAmount = async (type) => {
+            
+                try {
+                    const res = await axiosPrivate.get(`devices/${type}/amount`, 
+                    {
+                        signal: controller.signal,
+                    })
+                    return res.data
+                } catch (err) {
+                    console.log(err)
+                }
             }
-        }
-        getAmount()
-        
-        return () => {
-            isMounted = false;
-            controller.abort();
-        }
-    }, [])
-    return amount
+
+            let temp = devices
+            temp.forEach(async (device, index) => {
+                const res = await getAmount(device.type)
+                console.log(device.type, res)
+                temp[index].amount = res?.amount
+                temp[index].enabled = res?.status
+            })
+            isMounted && setDevices(temp)
+            return () => {
+                controller.abort()
+                isMounted = false
+            }
+        },[])
+    )
+    return devices
 }
 
 export const useGetAll = (type) => {
@@ -37,7 +64,7 @@ export const useGetAll = (type) => {
         const controller = new AbortController();
         const getList = async () => {
             try {
-                const res = await axiosPrivate.get(`devices/all/${type}`, 
+                const res = await axiosPrivate.get(`devices/${type}/all`, 
                 {
                     signal: controller.signal,
                 })
@@ -56,5 +83,3 @@ export const useGetAll = (type) => {
     }, [])
     return list
 }    
-
-//export default useGetAmount

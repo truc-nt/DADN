@@ -4,27 +4,19 @@ const extendSchema = require('mongoose-extend-schema')
 const axios = require('axios')
 
 const FanSchema = extendSchema(DeviceSchema, {
-        mode: {
-            type: String,
-            enum: ['Thủ công', 'Tự động'],
-            default: 'Thủ công',
-        },
-        strength: {
-            type: Number,
-            required: true,
-        },
+        
     },
     { timestamps: true }
 )
 
-FanSchema.methods.changeStatus = async function(APIKey, status) {
+FanSchema.methods.changeStatus = async function(io_username, io_key, status) {
     try {
-        const data = status && this.value > 0 ? this.value : status ? 80 : 0
-        await axios.post(`https://io.adafruit.com/api/v2/NhanHuynh/feeds/${this.key}/data?x-aio-key=${APIKey}`, {
+        const data = status && this.value > 0 ? this.value : status ? 100 : 0
+        await axios.post(`https://io.adafruit.com/api/v2/${io_username}/feeds/${this.key}/data?x-aio-key=${io_key}`, {
             "value": data
         })
         this.status = status
-        this.strength = data
+        this.value = data
         this.mode = "Thủ công"
         await this.save()
     } catch (err) {
@@ -41,12 +33,12 @@ FanSchema.methods.changeMode = async function() {
     }
 }
 
-FanSchema.methods.changeStrength = async function(APIKey, strength) {
+FanSchema.methods.changeValue = async function(io_username, io_key, value) {
     try {
-        await axios.post(`https://io.adafruit.com/api/v2/NhanHuynh/feeds/${this.key}/data?x-aio-key=${APIKey}`, {
-                "value": strength
+        await axios.post(`https://io.adafruit.com/api/v2/${io_username}/feeds/${this.key}/data?x-aio-key=${io_key}`, {
+            "value": value
         })
-        this.strength = strength
+        this.value = value
         await this.save();
     } catch (err) {
         console.log(err)

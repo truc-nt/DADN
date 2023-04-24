@@ -15,8 +15,6 @@ const OnOffDeviceDetail = (props) => {
     const navigation = useNavigation()
     const axiosPrivate = useAxiosPrivate()
 
-    console.log(props)
-
     const updateStatus = async (type, id) => {
         try {
             const res = await axiosPrivate.put(`devices/status/${type}/${id}`)
@@ -52,28 +50,25 @@ const OnOffDeviceDetail = (props) => {
     const [isEnabled, setIsEnabled] = useState(props.detail.status)
     const [modalName, setModalName] = useState(false)
     const [modalPos, setModalPos] = useState(false) 
-    const [lightModal, setLightModal] = useState(false)
     const [fanModal, setFanModal] = useState(false)
-    const [fanVal, setFanVal] = useState(props.detail.strength)
+    const [fanVal, setFanVal] = useState(props.detail.value)
     const [lightColor, setLightColor] = useState(props.detail.value)
 
     return (
         <SafeAreaView className="flex-1 bg-lightblue relative px-[5%] items-center">
-            <View className="flex top-[58px] left-[5%] absolute">
+            <View className="flex-row w-[80%] h-[12%] justify-between items-center self-start">
                 <TouchableOpacity
                     onPress={() => navigation.goBack()}
                 >
                     <AntDesign name="left" size={35} color="black" />
                 </TouchableOpacity>
+                <Text style={{fontFamily: "LexendSemiBold"}} className="text-[30px] w-[75%] text-center">{name}</Text>
             </View>
-            <View className="flex-row w-[50%] h-[70px] justify-center mb-[5%]">
-                <Text numberOfLines={1} style={{fontFamily: "LexendSemiBold"}} className="text-[30px]">{name}</Text>
-            </View>
-            <View className="h-[77%] w-[100%]">
+            <View className="h-[78%] w-[100%]">
                 <ScrollView>
                     <View className="flex-row w-[100%] h-[65px] bg-semiblue rounded-[20px] items-center px-[5%] mb-[25px]">
                         <View className="flex-row w-[70%] items-center">
-                            <Text numberOfLines={1} style={{fontFamily: "LexendSemiBold"}} className="text-[22px] pr-[2%]">{name}</Text>
+                            <Text numberOfLines={1} style={{fontFamily: "LexendSemiBold"}} className="text-[22px] pr-[10px]">{name}</Text>
                             <TouchableOpacity
                                 onPress={()=>setModalName(true)}
                             >
@@ -146,7 +141,7 @@ const OnOffDeviceDetail = (props) => {
                             </View>
                         }
                     </View>
-                    <TimeArrange light={props.light?true:false} fan={props.fan?true:false} thief={props.thief?true:false} id={props.id}/>
+                    <TimeArrange device={props?.detail} id={props.id}/>
                     <TextChangeModal 
                         visible={modalName}
                         setModal={setModalName}
@@ -166,7 +161,7 @@ const OnOffDeviceDetail = (props) => {
                         setModal={setFanModal}
                         id={props.detail._id}
                         setVal={setFanVal}
-                        strength={fanVal}
+                        value={fanVal}
                     />
                 </ScrollView>
             </View>

@@ -21,12 +21,12 @@ exports.verifyAccessToken = async (req, res, next) => {
         }
     } catch (err) {
         if (err.name === 'JsonWebTokenError') 
-            res.status(401).json({
+            return res.status(401).json({
                 success: false,
                 message: 'Unathorized'
             })
         if (err.name === 'TokenExpiredError')
-            res.json({
+            return res.json({
                 success: false,
                 message: 'Session expired! Try login again'
             })

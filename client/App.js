@@ -15,7 +15,20 @@ import { useFonts } from 'expo-font';
 
 import useAuth from './hooks/useAuth'
 
+import * as Device from 'expo-device'
+import * as Notifications from 'expo-notifications'
+import React, { useState, useRef, useEffect } from 'react'
+import { View, Text, TouchableOpacity, Switch, ScrollView, Button } from 'react-native'
+
 const Stack = createNativeStackNavigator();
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+})
 
 export default function App() {
   const [fontLoaded] = useFonts({
@@ -26,13 +39,67 @@ export default function App() {
     LexendMedium: require("./assets/font/static/Lexend-Medium.ttf"),
   })
 
-  if (!fontLoaded) return null;
+  if (!fontLoaded) return null
+
+  /*const [expoPushToken, setExpoPushToken] = useState('')
+  const [notification, setNotification] = useState(false)
+  const notificationListener = useRef()
+  const responseListener = useRef()
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then(token => setExpoPushToken(token))
+
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification)
+    })
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log(response)
+      console.log("hello")
+    })
+
+    const subscription = Notifications.addNotificationReceivedListener(notification => {
+      console.log(notification, "hello")
+    })
+
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener.current)
+      Notifications.removeNotificationSubscription(responseListener.current)
+      subscription.remove()
+    }
+  }, [])*/
+
   return (
     <AuthProvider>
       <NavigationContainer>
         <MainNavigation></MainNavigation>
       </NavigationContainer>
     </AuthProvider>
+  /*<View
+      style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'space-around',
+      }}>
+      <Text>Your expo push token: {expoPushToken}</Text>
+      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <Text>Title: {notification && notification.request.content.title} </Text>
+        <Text>Body: {notification && notification.request.content.body}</Text>
+        <Text>Data: {notification && JSON.stringify(notification.request.content.data)}</Text>
+      </View>
+      <Button
+        title="Press to schedule a notification"
+        onPress={async () => {
+          await schedulePushNotification();
+        }}
+      />
+      <Button
+        title="Press to cancle a notification"
+        onPress={async () => {
+          await Notifications.cancelAllScheduledNotificationsAsync()
+        }}
+      />
+    </View>*/
   );
 }
 
@@ -60,3 +127,50 @@ const MainNavigation = () => {
     </Stack.Navigator>
   )
 }
+
+/*async function schedulePushNotification() {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "You've got mail! 📬",
+      body: 'Here is the notification body',
+      data: { data: 'goes here' },
+    },
+    trigger: { 
+      hour: 11,
+      minute: 40,
+      repeats: true,
+    },
+  });
+}
+
+async function registerForPushNotificationsAsync() {
+  let token;
+
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(token);
+  } else {
+    //alert('Must use physical device for Push Notifications');
+  }
+
+  return token;
+}*/

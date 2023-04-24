@@ -5,12 +5,12 @@ import { MultiArcCircle } from 'react-native-circles';
 import useAxiosPrivate from '../hooks/useAxiosPrivate'
 
 const PercentageBar = (props) => {
-    const [value, setValue] = useState(props.strength)
+    const [value, setValue] = useState(props.value)
     const axiosPrivate = useAxiosPrivate()
 
-    const changeStrength = async (strength) => {
+    const changeValue = async (value) => {
         try {
-            const res = await axiosPrivate.put(`fans/strength/${props.id}`, {strength: strength})
+            const res = await axiosPrivate.put(`fans/value/${props.id}`, {value: value})
         } catch (err) {
             console.log(err)
         }
@@ -27,7 +27,7 @@ const PercentageBar = (props) => {
                  <TouchableOpacity className="items-center right-[5%] top-[1%] absolute">
                     <Text style={{fontFamily: "LexendMedium"}} className="text-[25px] text-blue"
                         onPress={() => {
-                            changeStrength(value)
+                            changeValue(value)
                             props.setModal(false)
                             props.setVal(Math.round(value))
                         }}

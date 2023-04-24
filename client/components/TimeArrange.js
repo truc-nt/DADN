@@ -1,13 +1,34 @@
 import { View, Text, Switch, TouchableOpacity, Modal } from 'react-native'
 import { AntDesign } from '@expo/vector-icons';
 import React, { useState } from 'react'
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker'
+import { Picker } from '@react-native-picker/picker'
+import useAxiosPrivate from '../hooks/useAxiosPrivate'
+import useGetTimers from '../hooks/useTimer'
+
+const formatTime = (date) => {
+    date = new Date(date)
+    return `${date.getHours() < 10?"0":""}${date.getHours()}:${date.getMinutes() < 10?"0":""}${date.getMinutes()}`
+}
 
 const TimePick = (props) => {
     const [from, setFrom] = useState(new Date())
     const [to, setTo] = useState(new Date())
     const [fromPick, setFromPick] = useState(false)
     const [toPick, setToPick] = useState(false)
+    const [mode, setMode] = useState("Bật")
+    const [value, setValue] = useState(1)
+
+    const axiosPrivate = useAxiosPrivate()
+
+    const addTimer = async () => {
+        try {
+            if (props.device.type === "light") await axiosPrivate.post(`timers/${props.device._id}`, JSON.stringify({from, to, mode, value}))
+            else if (props.device.type === "fan") await axiosPrivate.post(`timers/${props.device._id}`, JSON.stringify({from, to, mode}))
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
     return (
         <Modal
@@ -15,6 +36,7 @@ const TimePick = (props) => {
             transparent={true}
             visible={props.visible}
             onRequestClose={() => props.setModal(false)}
+            onBackdropPress={() => props.setModal(false)}
         >
             <View className="flex-1 p-[5%] bg-black/[.5] justify-center">
                 <View className="p-[5%] bg-white">
@@ -41,13 +63,48 @@ const TimePick = (props) => {
                             </TouchableOpacity>
                         </View>
                     </View>
+                    { (props.device.type === "light" || props.device.type === "fan") &&
+                    <>
+                        <View className="flex-row items-center w-[100%]">
+                            <Text style={{fontFamily: "LexendRegular"}} className="text-[19px] text-blue w-[50%]">Chế độ:</Text>
+                            <View className="text-[19px] text-blue w-[50%]">
+                                <Picker
+                                    selectedValue={mode}
+                                    onValueChange={(itemValue) => setMode(itemValue)}
+                                    className="text-[19px] text-blue"
+                                    style={{fontFamily: "LexendRegular", marginLeft: -16, color: 'black'}}
+                                >
+                                    <Picker.Item label="Bật" value={"Bật"} color={mode === "Bật"?"#5AC2DA":"black"}/>
+                                    <Picker.Item label="Tự động" value={"Tự động"} /> 
+                                </Picker> 
+                            </View>
+                        </View>
+                        {props.device.type === "light" && <View className="flex-row items-center w-[100%]">
+                            <Text style={{fontFamily: "LexendRegular"}} className="text-[19px] text-blue w-[50%]">Màu sắc</Text>
+                            <View className="flex-1">
+                                <Picker
+                                    selectedValue={value}
+                                    onValueChange={(itemValue) => setValue(itemValue)}
+                                    className="text-[19px] text-blue"
+                                    style={{fontFamily: "LexendRegular", marginLeft: -16, color: 'black'}}
+                                >
+                                    <Picker.Item label="Đỏ" value={1} color="red"/>
+                                    <Picker.Item label="Xanh lá" value={2} color="green"/>
+                                    <Picker.Item label="Xanh biển" value={3} color="blue"/>
+                                    <Picker.Item label="Cam" value={4} color="orange"/>
+                                </Picker> 
+                            </View>
+                        </View>}
+                    </>
+                    }
                     <TouchableOpacity className="items-center mt-[20px] ml-[auto]">
                         <Text style={{fontFamily: "LexendSemiBold"}} className="text-[20px] text-blue"
                             onPress={() => {
-                                const fromTime = (from.getHours() < 10?"0":"") + from.getHours() + ":" + (from.getMinutes() < 10?"0":"") + from.getMinutes();
-                                const toTime = (to.getHours() < 10?"0":"") + to.getHours() + ":" + (to.getMinutes() < 10?"0":"") + to.getMinutes();
-                                props.setList([...props.list, {'from': fromTime, 'to': toTime, 'on': true}]);
-                                props.setOpen(false);
+                                const fromTime = from
+                                const toTime = to
+                                addTimer()
+                                props.setTimers([...props.timers, {'from': fromTime, 'to': toTime, 'status': true}]);
+                                props.setOpen(false)
                             }}
                         >Lưu</Text>
                     </TouchableOpacity>
@@ -59,6 +116,7 @@ const TimePick = (props) => {
                     value={from}
                     mode='time'
                     is24Hour={true}
+                    display='default'
                     onChange={(e, selectedDate) => {
                         setFrom(selectedDate)
                         setFromPick(false)
@@ -82,47 +140,37 @@ const TimePick = (props) => {
 }
 
 const TimeArrange = (props) => {
+    const [timers, setTimers] = useGetTimers(props.device._id)
+    const [timePick, setTimePick] = useState(false)
+    const axiosPrivate = useAxiosPrivate()
 
-    const timeList = [
-        {
-            'from': '9:00',
-            'to': '10:00',
-            'on': true
-        },
-        {
-            'from': '15:00',
-            'to': '16:30',
-            'on': false
-        },
-        {
-            'from': '18:00',
-            'to': '20:00',
-            'on': false
-        },
-    ]
-
-    const [list, setList] = useState(timeList);
-    const [timePick, setTimePick] = useState(false);
+    const changeTimerStatus = async (timerId) => {
+        try {
+            const res = await axiosPrivate.patch(`timers/${timerId}`)
+            console.log(res.data)
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
     return (
         <View className="flex w-[100%] bg-semiblue rounded-[20px] items-center px-[5%] mb-[25px]">
-            {list.map((time, index) => 
+            {timers.map((time, index) => 
                 <View key={index} className={"flex-row w-[100%] justify-between h-[65px] items-center border-b-[1px]"}>
-                    <Text numberOfLines={1} style={{fontFamily: `${time.on?"LexendRegular":"LexendExtraLight"}`}} className="text-[17px]">{time.from} - {time.to}</Text>
+                    <Text numberOfLines={1} style={{fontFamily: `${time.status?"LexendRegular":"LexendExtraLight"}`}} className="text-[17px]">{formatTime(time.from)} - {formatTime(time.to)}</Text>
                     <Switch
                         trackColor={{false: 'white', true: '#5AC2DA'}}
                         thumbColor={'#F4FAFF'}
                         onValueChange={() => {
-                            if (index == 0) setList([{...time, 'on': !time.on}, ...list.slice(1)])
-                            else if (index == list.length - 1) setList([...list.slice(0,-1), {...time, 'on': !time.on}])
-                            else setList([...list.slice(0,index), {...time, 'on': !time.on}, ...list.slice(index+1)])
-                            //change on/off of device in server
-                            //change control
+                            if (index == 0) setTimers([{...time, 'status': !time.status}, ...timers.slice(1)])
+                            else if (index == timers.length - 1) setTimers([...timers.slice(0,-1), {...time, 'status': !time.status}])
+                            else setTimers([...timers.slice(0,index), {...time, 'status': !time.status}, ...timers.slice(index+1)])
+                            changeTimerStatus(time._id)
                         }}
-                        value={time.on}
+                        value={time.status}
                     />
                 </View>
-            )}
+                    )}
             <View className={"flex-row w-[100%] justify-between h-[65px] items-center"}>
                 <Text numberOfLines={1} style={{fontFamily: "LexendSemiBold"}} className="text-[17px]">Hẹn giờ</Text>
                 <TouchableOpacity
@@ -131,7 +179,7 @@ const TimeArrange = (props) => {
                     <AntDesign name="pluscircle" size={24} color="#5AC2DA" />
                 </TouchableOpacity>
             </View>
-            {timePick && <TimePick setOpen={setTimePick} setList={setList} list={list}/>}
+            {timePick && <TimePick setOpen={setTimePick} setTimers={setTimers} timers={timers} device={props.device}/>}
         </View>
     )
 }

@@ -24,7 +24,7 @@ const OnOffDevice = (props) => {
                 </TouchableOpacity>
             </View>
             <View className="flex-row w-[50%] h-[8%] justify-center mb-[5%]">
-                <Text style={{fontFamily: "LexendSemiBold"}} className="text-[30px]">{name[props?.type]}</Text>
+                <Text style={{fontFamily: "LexendSemiBold"}} className="text-[30px]">{name[props?.list[0].type]}</Text>
             </View>
             <DeviceItemsList devicesList={props?.list}/>
             <NavBar />

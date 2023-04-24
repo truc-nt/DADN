@@ -13,8 +13,10 @@ exports.validateUserRegister = [
         }
         return true
     }),
-    check('repwd').trim().not()
-        .isEmpty().withMessage('APIKey is required!')    
+    check('io_username').trim().not()
+        .isEmpty().withMessage('io_username is required'),
+    check('io_key').trim().not()
+        .isEmpty().withMessage('io_key is required!')    
 ]
 
 exports.validateUserLogin = [

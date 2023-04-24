@@ -19,9 +19,9 @@ export default function NavBar(props) {
         onPress={() => navigation.navigate("Setting")}
         className="justify-center, items-center"
       >
-        <Ionicons name="settings" size={26} color={`${props.setting?"#5AC2DA":"grey"}`} />
+        <Ionicons name="settings-outline" size={26} color={`${props.setting?"#5AC2DA":"grey"}`} />
         {props.setting && 
-          <Text style={{fontFamily: 'LexendMedium'}} className="text-[11px] text-center text-blue">Home</Text>
+          <Text style={{fontFamily: 'LexendMedium'}} className="text-[11px] text-center text-blue">Setting</Text>
         }
       </TouchableOpacity>
     </View>

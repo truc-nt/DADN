@@ -1,28 +1,16 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-
 const cookieParser = require('cookie-parser')
-
-
-const mqtt = require('mqtt')
-const client = mqtt.connect("mqtts://NhanHuynh:aio_hIUx48oBVOP2TsNLn07BbAc9mQAa@io.adafruit.com:8883")
-
-topics = ['bbc-led', 'bbc-fan', 'bbc-temp', 'bbc-anti-thief', 'bbc-humi']
-
-client.on('connect', () =>{
-    console.log('connect')
-    topics.forEach((topic) => {
-        client.subscribe(`NhanHuynh/feeds/${topic}`)
-    })
-
-    client.on('message', (topic, message) => {
-        console.log(`message: ${message}, topic: ${topic}`); 
-    });    
-})
-
 const app = express()
+
 require('dotenv').config()
 require('./models/db')
+
+const {connectBrokers} = require('./controllers/mqttController')
+const {scheduleActions} = require('./controllers/timerController')
+connectBrokers()
+scheduleActions()
+
 const PORT = process.env.PORT || 3000
 
 app.use(bodyParser.json())
@@ -40,12 +28,10 @@ app.use('/logout', require('./routes/logout'))
 
 app.use('/user', require('./routes/user'))
 app.use('/devices', require('./routes/devices'))
-app.use('/lights', require('./routes/lights'))
-app.use('/fans', require('./routes/fans'))
-
-
 app.use('/temp', require('./routes/temp'))
 app.use('/humid', require('./routes/humid'))
+
+app.use('/timers', require('./routes/timer'))
 
 app.listen(PORT, () => {
     /*axios.get('https://io.adafruit.com/api/groups/Default/receive.json?x-aio-key=aio_hIUx48oBVOP2TsNLn07BbAc9mQAa')

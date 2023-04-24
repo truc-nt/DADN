@@ -2,32 +2,32 @@ import { useState, useCallback } from "react";
 import useAxiosPrivate from './useAxiosPrivate'
 import { useFocusEffect } from '@react-navigation/native';
 
-const useTemp = () => {
-    const [temp, setTemp] = useState()
+const useGetTimers = (deviceId) => {
+    const [timers, setTimers] = useState([])
     const axiosPrivate = useAxiosPrivate()
     useFocusEffect(
         useCallback(() => {
             let isMounted = true;
             const controller = new AbortController();
-            const getTemp = async () => {
+            const getTimers = async () => {
                 try {
-                    const res = await axiosPrivate.get('/temp', 
+                    const res = await axiosPrivate.get(`/timers/${deviceId}`, 
                         {
                             signal: controller.signal,
                         })
-                    isMounted && setTemp(res.data)
+                    isMounted && setTimers(res.data)
                 } catch (err) {
                     console.log(err)
                 }
             }
-            getTemp()
+            getTimers()
             return () => {
                 controller.abort()
                 isMounted = false
             }
         }, [])
     )
-    return temp
+    return [timers, setTimers]
 }
 
-export default useTemp
+export default useGetTimers
