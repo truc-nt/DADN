@@ -1,13 +1,14 @@
 import React from 'react'
 import useAuth from './useAuth'
-import axios from '../api/axios'
+import axiosPrivate from '../api/axios'
 
 const useRefreshToken = () => {
-    const {setAuth} = useAuth()
+    const {auth, setAuth} = useAuth()
+    console.log(auth) 
 
     const refresh = async () => {
-        const res = await axios.get('/refresh', {
-            widthCredentials: true
+        const res = await axiosPrivate.post('/refresh', {
+            refreshToken: auth.refreshToken
         })
 
         setAuth(prev => {

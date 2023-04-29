@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView} from 'react-native';
+import { Alert, View, Text, TouchableOpacity, ScrollView} from 'react-native';
 import React, { useLayoutEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
@@ -16,32 +16,29 @@ export const login = async (setAuth, username, password) => {
         const res = await axios.post('/login', 
             JSON.stringify({username, password}),
         )
-        if (res.data.success) {
-            console.log(res.data.user)
-            const user = res.data.user
+        console.log(res.data.user)
+        const user = res.data.user
 
-            //get NOTIFICATION TOKEN
-            const { status: existingStatus } = await Notifications.getPermissionsAsync()
-            let finalStatus = existingStatus
-            if (existingStatus !== 'granted') {
-                const { status } = await Notifications.requestPermissionsAsync()
-                finalStatus = status
-            }
-            if (finalStatus !== 'granted') return
-            const tokenData = await Notifications.getExpoPushTokenAsync()
-            const token = tokenData.data
-            console.log(token, user.accessToken)
-            await axiosPrivate.post(`/noti`, {token: token}, {
-                headers: {
-                  'Authorization': `Bearer ${user.accessToken}`,
-                },
-            })
-
-            await setAuth(user)
-            await AsyncStorage.setItem('user',  JSON.stringify(user))
+        //get NOTIFICATION TOKEN
+        const { status: existingStatus } = await Notifications.getPermissionsAsync()
+        let finalStatus = existingStatus
+        if (existingStatus !== 'granted') {
+            const { status } = await Notifications.requestPermissionsAsync()
+            finalStatus = status
         }
+        if (finalStatus !== 'granted') return
+        const tokenData = await Notifications.getExpoPushTokenAsync()
+        const token = tokenData.data
+        await axiosPrivate.post(`/noti`, {token: token}, {
+            headers: {
+                'Authorization': `Bearer ${user.accessToken}`,
+            },
+        })
+
+        await setAuth(user)
+        await AsyncStorage.setItem('user',  JSON.stringify(user))
     } catch (err) {
-        console.log(err)
+        Alert.alert("Error", err.response.data)
     }
 }
 
@@ -54,7 +51,7 @@ const Login = ({navigation}) => {
     }, [])
 
     const [user, setUser] = useState("")
-    const [pwd, setPwd] = useState("")
+    const [pwd, setPwd] = useState("") 
 
     return (
         <SafeAreaView className="flex-col h-[100%] w-[100%] bg-lightblue relative px-[8%] pt-[10px] pb-[50px] items-center justify-between" >

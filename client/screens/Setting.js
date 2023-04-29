@@ -9,6 +9,8 @@ import TextChangeModal from '../components/TextChangeModal';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import useAuth from '../hooks/useAuth'
 
+import useAxiosPrivate  from '../hooks/useAxiosPrivate'
+
 const PasswordchangeModal = (props) => {
     const [oldPw, setOldPw] = useState("")
     const [newPw, setNewPw] = useState("")
@@ -70,12 +72,20 @@ const Setting = ({navigation}) => {
         password: "toilanguoi"
     }
 
-    const {setAuth} = useAuth()
+    const axiosPrivate = useAxiosPrivate()
+
+    const {auth, setAuth} = useAuth()
 
     const [username, setUsername] = useState(user.username)
     const [password, setPassword] = useState(user.password)
     const [modalName, setModalName] = useState(false)
     const [modalPw, setModalPw] = useState(false)
+
+    const logout = async () => {
+        const res = await axiosPrivate.post(`/logout`, {refreshToken: auth.refreshToken})
+        await setAuth({}); 
+        await AsyncStorage.removeItem('user'); 
+    }
 
     return (
         <SafeAreaView className="flex-1 bg-lightblue relative px-[5%]">
@@ -114,7 +124,7 @@ const Setting = ({navigation}) => {
                         </TouchableOpacity>
                         <TouchableOpacity 
                             className="flex-row w-[100%] h-[80px] py-[10px] justify-between items-center"
-                            onPress={async () => {await setAuth({}); await AsyncStorage.removeItem('user'); }}
+                            onPress={() => logout()}
                         >
                             <Text numberOfLines={1} style={{fontFamily: "LexendRegular"}} className="text-[19px] text-blue">Đăng xuất</Text>
                             <AntDesign name="logout" size={28} color="#5AC2DA" />

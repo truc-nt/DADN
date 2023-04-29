@@ -29,64 +29,42 @@ const handleRegister = async (req, res) => {
 }
 
 const handleLogin = async (req, res) => {
-    const cookies = req.cookies
     const {username, password} = req.body
     const user = await User.findOne({username})
-    if (!user) return res.json({
-        success: false,
-        message: 'User not found with username'
-    })
+    if (!user) return res.status(404).json('Tên đăng nhập không hợp lệ')
     const isPasswordMatched = await user.comparePassword(password)
-    if (!isPasswordMatched) return res.json({
-        success: false,
-        message: 'Password not matched'
-    })
+    if (!isPasswordMatched) return res.status(401).json('Mật khẩu không đúng')
     
-    const newRefreshToken = jwt.sign({_id: user._id}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '7d'})
+    const refreshToken = jwt.sign({_id: user._id}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '7d'})
+    user.refreshToken = [...user.refreshToken, refreshToken]
+    await user.save()
     
-    const newRefreshTokenArray = cookies?.refreshToken ? user.refreshToken.filter(rt => rt !== cookies.refreshToken) : user.refreshToken
-    
-    if (cookies?.refreshToken) {
-        res.clearCookie('resfreshToken', { httpOnly: true, sameSite: 'None', secure: true })
-    }
-
-    res.cookie('refreshToken', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 })
-    //user.refreshToken = [...newRefreshTokenArray, newRefreshToken]
-    //const result = await user.save()
-    //console.log(result)
-
-    const accessToken = jwt.sign({_id: user._id}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '7d'}) 
+    const accessToken = jwt.sign({_id: user._id}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10s'}) 
     
     res.status(202).json({
-        success: true,
-        message: 'Login successfully!',
+        message: 'Đăng nhập thành công',
         user: {
             _id: user._id,
             username: user.username,
             avatar: user.avatar,
             io_username: user.io_username,
             io_key: user.io_key,
+            refreshToken: refreshToken,
             accessToken: accessToken
         },
     })
 }
 
 const handleLogout = async (req, res) => {
-    const cookies = req.cookies
-    if (!cookies?.refreshToken) return res.sendStatus(204);
-    
-    const refreshToken = cookies.refreshToken
+    const {refreshToken} = req.body
+    console.log(refreshToken)
     const user = await User.findOne({refreshToken})
 
-    if (!user) {
-        res.clearCookie('refreshToken', {httpOnly: true, sameSite: 'None', secure: true})
-        return res.sendStatus(204)
-    }
+    if (!user) return res.sendStatus(204)
 
     user.refreshToken = user.refreshToken.filter(rt => rt !== refreshToken)
     const result = await user.save()
     console.log(result)
-    res.clearCookie('refreshToken', {httpOnly: true, sameSite: 'None', secure: true})
     res.sendStatus(202)
 }
 

@@ -2,13 +2,7 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/UserModel')
 
 const handleRefreshToken = async (req, res) => {
-    const cookies = req.cookies
-    console.log("coookie", cookies)
-    if (!cookies?.refreshToken) return res.sendStatus(401)
-    const refreshToken = cookies.refreshToken
-
-    res.clearCookie('resfreshToken', { httpOnly: true, sameSite: 'None', secure: true })
-
+    const {refreshToken} = req.body
     const user = await User.findOne({refreshToken})
 
     // Detected refresh token reuse!
@@ -36,14 +30,12 @@ const handleRefreshToken = async (req, res) => {
 
         if (err || user._id.toString() !== decoded._id) return res.status(403)
         
-        const accessToken = jwt.sign({_id: user._id}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '7d'})
+        const accessToken = jwt.sign({_id: user._id}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10s'})
         
         // Refresh token was still valid
-        const newRefreshToken = jwt.sign({_id: user._id}, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' })
+        const refreshToken = jwt.sign({_id: user._id}, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' })
 
-        user.refreshToken = [...newRefreshTokenArray, newRefreshToken]
-        await user.save()
-        res.cookie('refreshToken', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 7 })
+        user.refreshToken = [...newRefreshTokenArray, refreshToken]
 
         res.status(200).json({ accessToken: accessToken })
     })
