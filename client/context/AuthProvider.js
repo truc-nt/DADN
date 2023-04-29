@@ -11,6 +11,7 @@ const AuthProvider = ({children}) => {
     const getUser = async () => {
         try {
             let user = await AsyncStorage.getItem('user')
+            console.log(user)
             setAuth(JSON.parse(user))
         } catch (err) {
             console.log(err)

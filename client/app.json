@@ -30,6 +30,9 @@
         "projectId": "e9185ded-f467-4cde-9f20-e7a47982f9a7"
       }
     },
+    "permissions": [
+      "NOTIFICATIONS"
+    ],
     "owner": "pandora241202"
   }
 }

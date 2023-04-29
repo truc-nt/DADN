@@ -32,15 +32,8 @@ app.use('/temp', require('./routes/temp'))
 app.use('/humid', require('./routes/humid'))
 
 app.use('/timers', require('./routes/timer'))
+app.use('/noti', require('./routes/noti'))
 
 app.listen(PORT, () => {
-    /*axios.get('https://io.adafruit.com/api/groups/Default/receive.json?x-aio-key=aio_hIUx48oBVOP2TsNLn07BbAc9mQAa')
-    .then((res) => {
-        console.log(res.data)
-    })
-    axios.post('https://io.adafruit.com/api/groups/Default/send.json?x-aio-key=aio_hIUx48oBVOP2TsNLn07BbAc9mQAa&bbc-led=3')
-    .then((res) => {
-        console.log(res)
-    })*/
     console.log(`Server is running on port ${PORT}`)
 })

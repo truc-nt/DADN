@@ -22,9 +22,11 @@ const TimePick = (props) => {
     const axiosPrivate = useAxiosPrivate()
 
     const addTimer = async () => {
+        let res = ""
         try {
-            if (props.device.type === "light") await axiosPrivate.post(`timers/${props.device._id}`, JSON.stringify({from, to, mode, value}))
-            else if (props.device.type === "fan") await axiosPrivate.post(`timers/${props.device._id}`, JSON.stringify({from, to, mode}))
+            if (props.device.type === "light") res = await axiosPrivate.post(`timers/${props.device._id}`, JSON.stringify({from, to, mode, value}))
+            else if (props.device.type === "fan") res = await axiosPrivate.post(`timers/${props.device._id}`, JSON.stringify({from, to, mode}))
+            return res.data
         } catch (err) {
             console.log(err)
         }
@@ -99,11 +101,12 @@ const TimePick = (props) => {
                     }
                     <TouchableOpacity className="items-center mt-[20px] ml-[auto]">
                         <Text style={{fontFamily: "LexendSemiBold"}} className="text-[20px] text-blue"
-                            onPress={() => {
+                            onPress={async () => {
                                 const fromTime = from
                                 const toTime = to
-                                addTimer()
-                                props.setTimers([...props.timers, {'from': fromTime, 'to': toTime, 'status': true}]);
+                                const newTimer = await addTimer()
+                                console.log(newTimer)
+                                props.setTimers([...props.timers, {'_id': newTimer["id"], 'from': fromTime, 'to': toTime, 'status': true}]);
                                 props.setOpen(false)
                             }}
                         >Lưu</Text>

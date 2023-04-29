@@ -7,15 +7,38 @@ import Input from '../components/Input';
 import axios from '../api/axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
+
+import axiosPrivate from '../api/axios'
+import * as Notifications from 'expo-notifications';
+
 export const login = async (setAuth, username, password) => {
     try {
         const res = await axios.post('/login', 
             JSON.stringify({username, password}),
         )
         if (res.data.success) {
-            console.log(res.data)
-            await setAuth(res.data.user)
-            await AsyncStorage.setItem('user',  JSON.stringify(res.data.user))
+            console.log(res.data.user)
+            const user = res.data.user
+
+            //get NOTIFICATION TOKEN
+            const { status: existingStatus } = await Notifications.getPermissionsAsync()
+            let finalStatus = existingStatus
+            if (existingStatus !== 'granted') {
+                const { status } = await Notifications.requestPermissionsAsync()
+                finalStatus = status
+            }
+            if (finalStatus !== 'granted') return
+            const tokenData = await Notifications.getExpoPushTokenAsync()
+            const token = tokenData.data
+            console.log(token, user.accessToken)
+            await axiosPrivate.post(`/noti`, {token: token}, {
+                headers: {
+                  'Authorization': `Bearer ${user.accessToken}`,
+                },
+            })
+
+            await setAuth(user)
+            await AsyncStorage.setItem('user',  JSON.stringify(user))
         }
     } catch (err) {
         console.log(err)
