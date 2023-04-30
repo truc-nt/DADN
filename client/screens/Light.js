@@ -6,11 +6,11 @@ import {useGetAll} from '../hooks/useDevice'
 const Light = ({navigation}) => {
   const {list, type} = useGetAll("light")
 
-  useLayoutEffect(() => {
+  /*useLayoutEffect(() => {
       navigation.setOptions({
       headerShown: false,
     })
-  }, [])
+  }, [])*/
 
   return (
     list && <OnOffDevice list = {list} type = {type}/>

@@ -103,6 +103,12 @@ exports.handleChangeTimerStatus = async (req, res) => {
     console.log(id)
     try {
         const timer = await Timer.findOne({_id: id})
+        if (timer.status) {
+            timer_map[`${timer._id}from`].cancel()
+            timer_map[`${timer._id}to`].cancel()
+        } else {
+            //reschedule lai
+        }
         timer.status = !timer.status
         timer.save()
     } catch (err) {

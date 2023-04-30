@@ -11,7 +11,7 @@ import Fan from './screens/Fan';
 import Siren from './screens/Siren';
 import LightItemDetail from './screens/LightItemDetail';
 import FanItemDetail from './screens/FanItemDetail';
-import { useFonts } from 'expo-font'; 
+import { useFonts, loadAsync } from 'expo-font'; 
 
 import useAuth from './hooks/useAuth'
 
@@ -31,7 +31,7 @@ Notifications.setNotificationHandler({
 })
 
 export default function App() {
-  const [fontLoaded] = useFonts({
+  const [loaded] = useFonts({
     LexendExtraLight: require("./assets/font/static/Lexend-ExtraLight.ttf"),
     LexendRegular: require("./assets/font/static/Lexend-Regular.ttf"),
     LexendSemiBold: require("./assets/font/static/Lexend-SemiBold.ttf"),
@@ -39,15 +39,15 @@ export default function App() {
     LexendMedium: require("./assets/font/static/Lexend-Medium.ttf"),
   })
 
-  if (!fontLoaded) return null
+  //if (!fontLoaded) return null
 
   /*const [expoPushToken, setExpoPushToken] = useState('')
   const [notification, setNotification] = useState(false)
   const notificationListener = useRef()
-  const responseListener = useRef()
+  const responseListener = useRef()*/
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token))
+    /*registerForPushNotificationsAsync().then(token => setExpoPushToken(token))
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       setNotification(notification)
@@ -60,14 +60,32 @@ export default function App() {
 
     const subscription = Notifications.addNotificationReceivedListener(notification => {
       console.log(notification, "hello")
-    })
+    })*/
+    const subscription = Notifications.addNotificationReceivedListener(notification => {
+      console.log(notification);
+      // Xử lý push notification ở đây
+    });
 
+    async function loadFonts() {
+      await loadAsync({
+        'LexendExtraLight': require("./assets/font/static/Lexend-ExtraLight.ttf"),
+        'LexendRegular': require("./assets/font/static/Lexend-Regular.ttf"),
+        'LexendSemiBold': require("./assets/font/static/Lexend-SemiBold.ttf"),
+        'LexendBold': require("./assets/font/static/Lexend-Bold.ttf"),
+        'LexendMedium': require("./assets/font/static/Lexend-Medium.ttf"),
+      });
+    }
+    loadFonts();
     return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current)
-      Notifications.removeNotificationSubscription(responseListener.current)
+      //Notifications.removeNotificationSubscription(notificationListener.current)
+      //Notifications.removeNotificationSubscription(responseListener.current)
       subscription.remove()
     }
-  }, [])*/
+  }, [])
+
+  if (!loaded) {
+    return null;
+  }
 
   return (
     <AuthProvider>

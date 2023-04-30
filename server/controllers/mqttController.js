@@ -4,7 +4,7 @@ const Device = require('../models/DeviceModel')
 
 const clients = {}
 
-const connectBroker = async (userId) => {
+const connectPublisher = async (userId) => {
     const client = clients[userId]
     const devices = await Device.find({userId: userId})
     client.connect
@@ -26,7 +26,7 @@ const connectBroker = async (userId) => {
         })
 }
 
-exports.connectBrokers = async () => {
+const connectPublishers = async () => {
     try {
         const users = await User.find({ })
         users.forEach((user) => {
@@ -34,22 +34,28 @@ exports.connectBrokers = async () => {
                 io_username: user.io_username, 
                 connect: mqtt.connect(`mqtts://${user.io_username}:${user.io_key}@io.adafruit.com:8883`)
             }
-            connectBroker(user._id)
+            connectPublisher(user._id)
         })
     } catch (err) {
         console.log(err)
     }
 }
 
-exports.publishData = (userId, deviceKey, data) => {
+const publishData = (userId, deviceKey, data) => {
     const {io_username} = clients[userId]
     clients[userId].connect.publish(`${io_username}/f/${deviceKey}`, String(data))
 }
 
-exports.addBroker = (user) => {
+const addPublisher = (user) => {
     clients[user._id] = {
         io_username: user.io_username, 
         connect: mqtt.connect(`mqtts://${user.io_username}:${user.io_key}@io.adafruit.com:8883`)
     }
-    connectBroker(user._id)
+    connectPublisher(user._id)
+}
+
+module.exports = {
+    connectPublishers,
+    publishData,
+    addPublisher
 }

@@ -1,5 +1,20 @@
 const Device = require('../models/DeviceModel')
 
+exports.handleGetDevices = async (req, res) => {
+    const {_id} = req.user
+    const devices = await Device.find({userId : _id})
+    const ans = {}
+    devices.forEach(device => {
+        if (device.type in ans) {
+            ans[device.type]['amount'] += 1
+            ans[device.type]['enabled'] |= device.status
+        } else 
+            ans[device.type] = {'amount': 1, 'enabled': device.status}
+    })
+    console.log(ans)
+    res.status(202).json(ans)
+}
+
 exports.handleAddDevices = async (feedsFromAdafruitServer, userId) => {
     feedsFromAdafruitServer.map(async (feed) => {
         const {id, key, name, last_value}  = feed

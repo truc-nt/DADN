@@ -1,18 +1,14 @@
-import { Text, View, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { Text, View, ScrollView, Image } from 'react-native';
 import Profile from '../components/Profile';
 import Device from '../components/Device';
 import NavBar from '../components/NavBar';
-import React, { useEffect, useLayoutEffect, useState, useCallback } from 'react';
+import React, { useLayoutEffect, useState, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { NavigationContainer, useFocusEffect, useIsFocused} from '@react-navigation/native';
-
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useFocusEffect } from '@react-navigation/native';
 
 import useTemp from '../hooks/useTemp'
 import useHumid from '../hooks/useHumid'
 import useAxiosPrivate from '../hooks/useAxiosPrivate'
-import { useGetAmount, useGetDevices } from '../hooks/useDevice'
-
 
 const Weather = ({humid, temp}) => {
     return (
@@ -29,15 +25,6 @@ const Weather = ({humid, temp}) => {
             />
         </View>
     </View>
-    )
-}
-
-const DeviceList = ({devices}) => {
-    console.log("List", devices)
-    return (
-        devices.map((device, index) => (
-            <Device key={index} props={device}></Device>
-        ))
     )
 }
 
@@ -72,34 +59,27 @@ export default function Home({navigation}) {
 
     useFocusEffect(
         useCallback(() => {
-            let isMounted = true
             const controller = new AbortController()
-            const getAmount = async (type) => {
-            
+            const getAmount = async () => {
                 try {
-                    const res = await axiosPrivate.get(`devices/${type}/amount`, 
+                    const res = await axiosPrivate.get(`devices/amount`, 
                     {
                         signal: controller.signal,
                     })
-                    return res.data
+                    let newDevices = [...devices]
+                    newDevices.forEach(device => {
+                        device['amount'] = res.data[device.type]['amount']
+                        device['enabled'] = res.data[device.type]['enabled']
+                    })
+                    setDevices(newDevices)
                 } catch (err) {
                     console.log(err)
                 }
             }
+            getAmount()
 
-            let temp = [...devices]
-            temp.forEach(async (device, index) => {
-                const res = await getAmount(device.type)
-                //console.log(device.type, res)
-                temp[index].amount = res?.amount
-                temp[index].enabled = res?.status
-            })
-            console.log("hellu")
-            isMounted && setDevices(temp)
-            console.log(isMounted, temp)
             return () => {
                 controller.abort()
-                isMounted = false
             }
         },[])
     )

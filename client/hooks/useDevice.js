@@ -33,6 +33,7 @@ export const useGetDevices = () => {
                     {
                         signal: controller.signal,
                     })
+                    
                     return res.data
                 } catch (err) {
                     console.log(err)
@@ -42,7 +43,6 @@ export const useGetDevices = () => {
             let temp = devices
             temp.forEach(async (device, index) => {
                 const res = await getAmount(device.type)
-                console.log(device.type, res)
                 temp[index].amount = res?.amount
                 temp[index].enabled = res?.status
             })

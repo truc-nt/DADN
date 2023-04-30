@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const axios = require('axios')
-const {publishData} = require('../controllers/mqttController')
+//const {publishData} = require('../controllers/mqttController')
 
 const DeviceSchema = new mongoose.Schema({
         key: {

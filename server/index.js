@@ -6,9 +6,9 @@ const app = express()
 require('dotenv').config()
 require('./models/db')
 
-const {connectBrokers} = require('./controllers/mqttController')
+const mqtt = require('./controllers/mqttController')
 const {scheduleActions} = require('./controllers/timerController')
-connectBrokers()
+mqtt.connectPublishers()
 scheduleActions()
 
 const PORT = process.env.PORT || 3000
