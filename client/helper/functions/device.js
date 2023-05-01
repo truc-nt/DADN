@@ -1,12 +1,12 @@
-import useAxiosPrivate from '../../hooks/useAxiosPrivate'
+import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 
 export const getAll = async (type) => {
-    const axiosPrivate = useAxiosPrivate()
+    const axiosPrivate = useAxiosPrivate();
     try {
-        const res = await axiosPrivate.get(`devices/${type}/all`)
-        return res
+        const res = await axiosPrivate.get(`devices/${type}/all`);
+        return res;
     } catch (err) {
-        console.log(err)
-        return []
+        console.log(err);
+        return [];
     }
-}
+};

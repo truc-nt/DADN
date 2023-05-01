@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "prettier": "prettier --write \"./**/*.js\""
   },
   "author": "",
   "license": "ISC",
@@ -28,6 +29,7 @@
     "sharp": "^0.31.3"
   },
   "devDependencies": {
-    "nodemon": "^2.0.21"
+    "nodemon": "^2.0.21",
+    "prettier": "^2.8.8"
   }
 }

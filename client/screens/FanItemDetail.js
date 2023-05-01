@@ -1,17 +1,15 @@
 import React, { useLayoutEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import OnOffDeviceDetail from '../components/OnOffDeviceDetail'
+import OnOffDeviceDetail from '../components/OnOffDeviceDetail';
 
-const FanItemDetail = ({route, navigation}) => {
-  useLayoutEffect(() => {
-      navigation.setOptions({
-      headerShown: false,
-    })
-  }, [])
-  const {id} = route.params
+const FanItemDetail = ({ route, navigation }) => {
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerShown: false,
+        });
+    }, []);
+    const { id } = route.params;
 
-  return (
-    <OnOffDeviceDetail fan detail = {route.params.detail}/>
-  )
-}
-export default FanItemDetail
+    return <OnOffDeviceDetail fan detail={route.params.detail} />;
+};
+export default FanItemDetail;

@@ -1,6 +1,7 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-const TimerSchema = new mongoose.Schema({
+const TimerSchema = new mongoose.Schema(
+    {
         from: {
             type: Date,
             required: true,
@@ -32,4 +33,4 @@ const TimerSchema = new mongoose.Schema({
     { timestamps: true }
 );
 
-module.exports = mongoose.model('Timer',TimerSchema)
+module.exports = mongoose.model('Timer', TimerSchema);

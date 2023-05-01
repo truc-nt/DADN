@@ -1,11 +1,11 @@
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
 
-const {verifyAccessToken} = require('../middlewares/authMiddleware')
-const {handleChangeValue} = require('../controllers/lightController')
+const { verifyAccessToken } = require('../middlewares/authMiddleware');
+const { handleChangeValue } = require('../controllers/lightController');
 
-router.use(verifyAccessToken)
+router.use(verifyAccessToken);
 
-router.put('/value/:id', handleChangeValue)
+router.put('/value/:id', handleChangeValue);
 
-module.exports = router
+module.exports = router;

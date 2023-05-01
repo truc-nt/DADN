@@ -1,6 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import AuthProvider from './context/AuthProvider'
+import AuthProvider from './context/AuthProvider';
 import Home from './screens/Home';
 import Login from './screens/Login';
 import OnBoard from './screens/OnBoard';
@@ -11,43 +11,42 @@ import Fan from './screens/Fan';
 import Siren from './screens/Siren';
 import LightItemDetail from './screens/LightItemDetail';
 import FanItemDetail from './screens/FanItemDetail';
-import { useFonts, loadAsync } from 'expo-font'; 
+import { useFonts, loadAsync } from 'expo-font';
 
-import useAuth from './hooks/useAuth'
+import useAuth from './hooks/useAuth';
 
-import * as Device from 'expo-device'
-import * as Notifications from 'expo-notifications'
-import React, { useState, useRef, useEffect } from 'react'
-import { View, Text, TouchableOpacity, Switch, ScrollView, Button } from 'react-native'
+import TypeList from './screens/TypeList';
+import * as Notifications from 'expo-notifications';
+import React, { useEffect } from 'react';
 
 const Stack = createNativeStackNavigator();
 
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
-})
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+    }),
+});
 
 export default function App() {
-  const [loaded] = useFonts({
-    LexendExtraLight: require("./assets/font/static/Lexend-ExtraLight.ttf"),
-    LexendRegular: require("./assets/font/static/Lexend-Regular.ttf"),
-    LexendSemiBold: require("./assets/font/static/Lexend-SemiBold.ttf"),
-    LexendBold: require("./assets/font/static/Lexend-Bold.ttf"),
-    LexendMedium: require("./assets/font/static/Lexend-Medium.ttf"),
-  })
+    const [loaded] = useFonts({
+        LexendExtraLight: require('./assets/font/static/Lexend-ExtraLight.ttf'),
+        LexendRegular: require('./assets/font/static/Lexend-Regular.ttf'),
+        LexendSemiBold: require('./assets/font/static/Lexend-SemiBold.ttf'),
+        LexendBold: require('./assets/font/static/Lexend-Bold.ttf'),
+        LexendMedium: require('./assets/font/static/Lexend-Medium.ttf'),
+    });
 
-  //if (!fontLoaded) return null
+    //if (!fontLoaded) return null
 
-  /*const [expoPushToken, setExpoPushToken] = useState('')
+    /*const [expoPushToken, setExpoPushToken] = useState('')
   const [notification, setNotification] = useState(false)
   const notificationListener = useRef()
   const responseListener = useRef()*/
 
-  useEffect(() => {
-    /*registerForPushNotificationsAsync().then(token => setExpoPushToken(token))
+    useEffect(() => {
+        /*registerForPushNotificationsAsync().then(token => setExpoPushToken(token))
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       setNotification(notification)
@@ -61,39 +60,41 @@ export default function App() {
     const subscription = Notifications.addNotificationReceivedListener(notification => {
       console.log(notification, "hello")
     })*/
-    const subscription = Notifications.addNotificationReceivedListener(notification => {
-      console.log(notification);
-      // Xử lý push notification ở đây
-    });
+        const subscription = Notifications.addNotificationReceivedListener(
+            (notification) => {
+                console.log(notification);
+                // Xử lý push notification ở đây
+            }
+        );
 
-    async function loadFonts() {
-      await loadAsync({
-        'LexendExtraLight': require("./assets/font/static/Lexend-ExtraLight.ttf"),
-        'LexendRegular': require("./assets/font/static/Lexend-Regular.ttf"),
-        'LexendSemiBold': require("./assets/font/static/Lexend-SemiBold.ttf"),
-        'LexendBold': require("./assets/font/static/Lexend-Bold.ttf"),
-        'LexendMedium': require("./assets/font/static/Lexend-Medium.ttf"),
-      });
+        async function loadFonts() {
+            await loadAsync({
+                LexendExtraLight: require('./assets/font/static/Lexend-ExtraLight.ttf'),
+                LexendRegular: require('./assets/font/static/Lexend-Regular.ttf'),
+                LexendSemiBold: require('./assets/font/static/Lexend-SemiBold.ttf'),
+                LexendBold: require('./assets/font/static/Lexend-Bold.ttf'),
+                LexendMedium: require('./assets/font/static/Lexend-Medium.ttf'),
+            });
+        }
+        loadFonts();
+        return () => {
+            //Notifications.removeNotificationSubscription(notificationListener.current)
+            //Notifications.removeNotificationSubscription(responseListener.current)
+            subscription.remove();
+        };
+    }, []);
+
+    if (!loaded) {
+        return null;
     }
-    loadFonts();
-    return () => {
-      //Notifications.removeNotificationSubscription(notificationListener.current)
-      //Notifications.removeNotificationSubscription(responseListener.current)
-      subscription.remove()
-    }
-  }, [])
 
-  if (!loaded) {
-    return null;
-  }
-
-  return (
-    <AuthProvider>
-      <NavigationContainer>
-        <MainNavigation></MainNavigation>
-      </NavigationContainer>
-    </AuthProvider>
-  /*<View
+    return (
+        <AuthProvider>
+            <NavigationContainer>
+                <MainNavigation></MainNavigation>
+            </NavigationContainer>
+        </AuthProvider>
+        /*<View
       style={{
         flex: 1,
         alignItems: 'center',
@@ -118,33 +119,40 @@ export default function App() {
         }}
       />
     </View>*/
-  );
+    );
 }
 
 const MainNavigation = () => {
-  const {auth} = useAuth()
-  return (
-    <Stack.Navigator>
-      {!auth?.username ? (
-        <>
-          <Stack.Screen name="OnBoard" component={OnBoard} />
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name='Register' component={Register} />
-        </>
-      ) : (
-        <>
-          <Stack.Screen name="Home" component={Home} />
-          <Stack.Screen name='Setting' component={Setting} />
-          <Stack.Screen name='Light' component={Light} />
-          <Stack.Screen name='Fan' component={Fan} />
-          <Stack.Screen name='Siren' component={Siren} />
-          <Stack.Screen name='LightItemDetail' component={LightItemDetail} />
-          <Stack.Screen name='FanItemDetail' component={FanItemDetail} />
-        </>
-      )}
-    </Stack.Navigator>
-  )
-}
+    const { auth } = useAuth();
+    return (
+        <Stack.Navigator>
+            {!auth?.username ? (
+                <>
+                    <Stack.Screen name="OnBoard" component={OnBoard} />
+                    <Stack.Screen name="Login" component={Login} />
+                    <Stack.Screen name="Register" component={Register} />
+                </>
+            ) : (
+                <>
+                    <Stack.Screen name="Home" component={Home} />
+                    <Stack.Screen name="Setting" component={Setting} />
+                    <Stack.Screen name="TypeList" component={TypeList} />
+                    <Stack.Screen name="Light" component={Light} />
+                    <Stack.Screen name="Fan" component={Fan} />
+                    <Stack.Screen name="Siren" component={Siren} />
+                    <Stack.Screen
+                        name="LightItemDetail"
+                        component={LightItemDetail}
+                    />
+                    <Stack.Screen
+                        name="FanItemDetail"
+                        component={FanItemDetail}
+                    />
+                </>
+            )}
+        </Stack.Navigator>
+    );
+};
 
 /*async function schedulePushNotification() {
   await Notifications.scheduleNotificationAsync({

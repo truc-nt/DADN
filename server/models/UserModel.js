@@ -1,16 +1,17 @@
-const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
-const axios = require('axios')
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const axios = require('axios');
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema(
+    {
         username: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
         },
         password: {
             type: String,
-            required: true
+            required: true,
         },
         avatar: {
             type: Buffer,
@@ -18,12 +19,12 @@ const UserSchema = new mongoose.Schema({
         io_username: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
         },
         io_key: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
         },
         refreshToken: [String],
         pushToken: [String],
@@ -31,46 +32,51 @@ const UserSchema = new mongoose.Schema({
     { timestamps: true }
 );
 
-UserSchema.statics.isValidUsername = async function(username) {
-    if (!username) throw new Error()
+UserSchema.statics.isValidUsername = async function (username) {
+    if (!username) throw new Error();
     try {
-        const user = await this.findOne({username})
-        if (user) return false
-        return true
+        const user = await this.findOne({ username });
+        if (user) return false;
+        return true;
     } catch (err) {
-        console.log('error inside email in use', err.message)
-        return false
+        console.log('error inside email in use', err.message);
+        return false;
     }
-}
+};
 
-UserSchema.statics.isValidAdafruitServer = async function(io_username, io_key) {
-    if (!io_key) throw new Error()
+UserSchema.statics.isValidAdafruitServer = async function (
+    io_username,
+    io_key
+) {
+    if (!io_key) throw new Error();
     try {
-        const result = await axios.get(`https://io.adafruit.com/api/v2/${io_username}/feeds?x-aio-key=${io_key}`)
-        const user = await this.findOne({io_key})
-        if (user) return []
-        return result.data
+        const result = await axios.get(
+            `https://io.adafruit.com/api/v2/${io_username}/feeds?x-aio-key=${io_key}`
+        );
+        const user = await this.findOne({ io_key });
+        if (user) return [];
+        return result.data;
     } catch (err) {
-        console.log('error inside valid in use', err.message)
-        return []
+        console.log('error inside valid in use', err.message);
+        return [];
     }
-}
+};
 
 UserSchema.methods.comparePassword = async function (password) {
-    if (!password) throw new Error('Password is empty')
+    if (!password) throw new Error('Password is empty');
     try {
-        const result = await bcrypt.compare(password, this.password)
-        return result
+        const result = await bcrypt.compare(password, this.password);
+        return result;
     } catch (error) {
-        console.log('Error while comparing password', error.message)
+        console.log('Error while comparing password', error.message);
     }
-}
+};
 
-UserSchema.pre('save', async function(next) {
+UserSchema.pre('save', async function (next) {
     if (this.isModified('password')) {
-        this.password = await bcrypt.hash(this.password, 8)   
+        this.password = await bcrypt.hash(this.password, 8);
     }
-    next()
-})
+    next();
+});
 
-module.exports = mongoose.model('User',UserSchema);
+module.exports = mongoose.model('User', UserSchema);

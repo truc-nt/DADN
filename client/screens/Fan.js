@@ -1,19 +1,17 @@
 import React, { useLayoutEffect } from 'react';
-import OnOffDevice from "../components/OnOffDevice";
+import OnOffDevice from '../components/OnOffDevice';
 import { useGetAll } from '../hooks/useDevice';
 
-const Fan = ({navigation}) => {
-  const {list, type} = useGetAll("fan")
-  
-  useLayoutEffect(() => {
-      navigation.setOptions({
-      headerShown: false,
-    })
-  }, [])
+const Fan = ({ navigation }) => {
+    const { list, type } = useGetAll('fan');
 
-  return (
-    list && <OnOffDevice list = {list} type = {type}/>
-  )
-}
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerShown: false,
+        });
+    }, []);
 
-export default Fan
+    return list && <OnOffDevice list={list} type={type} />;
+};
+
+export default Fan;

@@ -1,19 +1,19 @@
-const mongoose = require('mongoose')
-const mqtt = require('mqtt')
+const mongoose = require('mongoose');
+const mqtt = require('mqtt');
 
-const User = require('../models/UserModel')
+const User = require('../models/UserModel');
 
 mongoose
     .connect(process.env.MONGO_URI, {
-        useNewUrlParser: true, 
+        useNewUrlParser: true,
         useUnifiedTopology: true,
     })
     .then(() => {
-        console.log('Connected to DB') 
+        console.log('Connected to DB');
     })
     .catch((err) => {
-        console.log('err', err)
-    })
+        console.log('err', err);
+    });
 
 /*const connectBrokers = async () => {
     let brokers = []
