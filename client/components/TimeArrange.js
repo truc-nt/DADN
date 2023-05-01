@@ -1,4 +1,11 @@
-import { View, Text, Switch, TouchableOpacity, Modal } from 'react-native';
+import {
+    Alert,
+    View,
+    Text,
+    Switch,
+    TouchableOpacity,
+    Modal,
+} from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -23,22 +30,42 @@ const TimePick = (props) => {
 
     const axiosPrivate = useAxiosPrivate();
 
+    const checkValidTimeRange = () => {
+        if (from.getTime() < to.getTime()) return true;
+        else return false;
+    };
+
     const addTimer = async () => {
         let res = '';
-        try {
-            if (props.device.type === 'light')
-                res = await axiosPrivate.post(
-                    `timers/${props.device._id}`,
-                    JSON.stringify({ from, to, mode, value })
-                );
-            else if (props.device.type === 'fan')
-                res = await axiosPrivate.post(
-                    `timers/${props.device._id}`,
-                    JSON.stringify({ from, to, mode })
-                );
-            return res.data;
-        } catch (err) {
-            console.log(err);
+        if (checkValidTimeRange()) {
+            console.log('why');
+            try {
+                if (props.device.type === 'light')
+                    res = await axiosPrivate.post(
+                        `timers/${props.device._id}`,
+                        JSON.stringify({ from, to, mode, value })
+                    );
+                else if (props.device.type === 'fan')
+                    res = await axiosPrivate.post(
+                        `timers/${props.device._id}`,
+                        JSON.stringify({ from, to, mode })
+                    );
+                const newTimer = res.data;
+                props.setOpen(false);
+                props.setTimers([
+                    ...props.timers,
+                    {
+                        _id: newTimer['id'],
+                        from: from,
+                        to: to,
+                        status: true,
+                    },
+                ]);
+            } catch (err) {
+                console.log(err);
+            }
+        } else {
+            Alert.alert('Error', 'Hãy chọn khoảng thời gian phù hợp');
         }
     };
 
@@ -47,8 +74,8 @@ const TimePick = (props) => {
             animationType="slide"
             transparent={true}
             visible={props.visible}
-            onRequestClose={() => props.setModal(false)}
-            onBackdropPress={() => props.setModal(false)}
+            onRequestClose={() => props.setOpen(false)}
+            onBackdropPress={() => props.setOpen(false)}
         >
             <View className="flex-1 p-[5%] bg-black/[.5] justify-center">
                 <View className="p-[5%] bg-white">
@@ -198,22 +225,7 @@ const TimePick = (props) => {
                         <Text
                             style={{ fontFamily: 'LexendSemiBold' }}
                             className="text-[20px] text-blue"
-                            onPress={async () => {
-                                const fromTime = from;
-                                const toTime = to;
-                                const newTimer = await addTimer();
-                                console.log(newTimer);
-                                props.setTimers([
-                                    ...props.timers,
-                                    {
-                                        _id: newTimer['id'],
-                                        from: fromTime,
-                                        to: toTime,
-                                        status: true,
-                                    },
-                                ]);
-                                props.setOpen(false);
-                            }}
+                            onPress={() => addTimer()}
                         >
                             Lưu
                         </Text>
@@ -269,46 +281,62 @@ const TimeArrange = (props) => {
                 <View
                     key={index}
                     className={
-                        'flex-row w-[100%] justify-between h-[65px] items-center border-b-[1px]'
+                        'flex w-[100%] justify-between items-center border-b-[1px]'
                     }
                 >
-                    <Text
-                        numberOfLines={1}
-                        style={{
-                            fontFamily: `${
-                                time.status
-                                    ? 'LexendRegular'
-                                    : 'LexendExtraLight'
-                            }`,
-                        }}
-                        className="text-[17px]"
+                    <View
+                        className={
+                            'flex-row w-[100%] justify-between items-center mb-[-7px]'
+                        }
                     >
-                        {formatTime(time.from)} - {formatTime(time.to)}
-                    </Text>
-                    <Switch
-                        trackColor={{ false: 'white', true: '#5AC2DA' }}
-                        thumbColor={'#F4FAFF'}
-                        onValueChange={() => {
-                            if (index == 0)
-                                setTimers([
-                                    { ...time, status: !time.status },
-                                    ...timers.slice(1),
-                                ]);
-                            else if (index == timers.length - 1)
-                                setTimers([
-                                    ...timers.slice(0, -1),
-                                    { ...time, status: !time.status },
-                                ]);
-                            else
-                                setTimers([
-                                    ...timers.slice(0, index),
-                                    { ...time, status: !time.status },
-                                    ...timers.slice(index + 1),
-                                ]);
-                            changeTimerStatus(time._id);
-                        }}
-                        value={time.status}
-                    />
+                        <Text
+                            numberOfLines={1}
+                            style={{
+                                fontFamily: `${
+                                    time.status
+                                        ? 'LexendRegular'
+                                        : 'LexendExtraLight'
+                                }`,
+                            }}
+                            className="text-[17px]"
+                        >
+                            {formatTime(time.from)} - {formatTime(time.to)}
+                        </Text>
+                        <Switch
+                            trackColor={{ false: 'white', true: '#5AC2DA' }}
+                            thumbColor={'#F4FAFF'}
+                            onValueChange={() => {
+                                if (index == 0)
+                                    setTimers([
+                                        { ...time, status: !time.status },
+                                        ...timers.slice(1),
+                                    ]);
+                                else if (index == timers.length - 1)
+                                    setTimers([
+                                        ...timers.slice(0, -1),
+                                        { ...time, status: !time.status },
+                                    ]);
+                                else
+                                    setTimers([
+                                        ...timers.slice(0, index),
+                                        { ...time, status: !time.status },
+                                        ...timers.slice(index + 1),
+                                    ]);
+                                changeTimerStatus(time._id);
+                            }}
+                            value={time.status}
+                        />
+                    </View>
+                    <View
+                        className={
+                            'flex-row w-[100%] justify-between items-center mb-[10px]'
+                        }
+                    >
+                        <Text className="text-[14px]">{time.mode}</Text>
+                        {time.value && (
+                            <Text className="text-[14px]">{time.value}</Text>
+                        )}
+                    </View>
                 </View>
             ))}
             <View

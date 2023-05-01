@@ -77,7 +77,7 @@ exports.handleChangeStatus = async (req, res) => {
 exports.handleChangeMode = async (req, res) => {
     const { _id } = req.user;
     const id = req.params.id;
-    
+
     let updated = await Device.findOne({ _id: id, userId: _id });
     updated.changeMode();
 

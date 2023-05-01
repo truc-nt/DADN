@@ -1,5 +1,4 @@
 import React, { useLayoutEffect, useState } from 'react';
-import OnOffDeviceDetail from '../components/OnOffDeviceDetail';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
@@ -32,7 +31,6 @@ const DeviceDetail = ({ route, navigation }) => {
         }
     };
 
-    //return <OnOffDeviceDetail light detail={detail} />;
     return (
         <SafeAreaView className="flex-1 bg-lightblue relative px-[5%] items-center">
             <View className="flex-row w-[80%] h-[12%] justify-between items-center self-start">

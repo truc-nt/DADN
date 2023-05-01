@@ -9,7 +9,6 @@ const PercentageBar = (props) => {
     const axiosPrivate = useAxiosPrivate();
 
     const changeValue = async () => {
-        console.log(value);
         try {
             const res = await axiosPrivate.put(`devices/value/${props.id}`, {
                 value: value,

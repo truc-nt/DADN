@@ -6,9 +6,6 @@ import Login from './screens/Login';
 import OnBoard from './screens/OnBoard';
 import Register from './screens/Register';
 import Setting from './screens/Setting';
-import Siren from './screens/Siren';
-import LightItemDetail from './screens/LightItemDetail';
-import FanItemDetail from './screens/FanItemDetail';
 import { useFonts, loadAsync } from 'expo-font';
 
 import useAuth from './hooks/useAuth';
@@ -139,15 +136,6 @@ const MainNavigation = () => {
                     <Stack.Screen
                         name="DeviceDetail"
                         component={DeviceDetail}
-                    />
-                    <Stack.Screen name="Siren" component={Siren} />
-                    <Stack.Screen
-                        name="LightItemDetail"
-                        component={LightItemDetail}
-                    />
-                    <Stack.Screen
-                        name="FanItemDetail"
-                        component={FanItemDetail}
                     />
                 </>
             )}

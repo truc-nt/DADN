@@ -47,7 +47,11 @@ const DeviceInfo = (props) => {
     return (
         <>
             <View className="w-[100%] bg-semiblue rounded-[20px] items-center px-[5%]  mb-[25px]">
-                <View className={`flex-row w-[100%] justify-between h-[65px] items-center ${props?.detail?.type !== 'siren' && 'border-b-[1px]'}`}>
+                <View
+                    className={`flex-row w-[100%] justify-between h-[65px] items-center ${
+                        props?.detail?.type !== 'siren' && 'border-b-[1px]'
+                    }`}
+                >
                     <Text
                         numberOfLines={1}
                         style={{ fontFamily: 'LexendMedium' }}
@@ -123,7 +127,12 @@ const DeviceInfo = (props) => {
                                     color: `${ledColor[value - 1]}`,
                                 }}
                             >
-                                <Picker.Item label="Tắt" value={0} color="black"/>
+                                <Picker.Item
+                                    label="Tắt"
+                                    value={0}
+                                    color="black"
+                                    enabled={false}
+                                />
                                 <Picker.Item label="Đỏ" value={1} color="red" />
                                 <Picker.Item
                                     label="Xanh lá"
