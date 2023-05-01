@@ -13,7 +13,7 @@ export default function Device({ props }) {
 
     const updateStatusAll = async (type, status) => {
         try {
-            await axiosPrivate.put(`devices/${type}/status`, {
+            await axiosPrivate.put(`devices/${type}/status/$`, {
                 status: status,
             });
         } catch (err) {
@@ -36,7 +36,7 @@ export default function Device({ props }) {
                 /*navigation.navigate(
                     `${props.type[0].toUpperCase() + props.type.slice(1)}`
                 )*/
-                navigation.navigate('TypeList', { type: props.type })
+                navigation.navigate('DeviceList', { type: props.type })
             }
         >
             <MaterialCommunityIcons

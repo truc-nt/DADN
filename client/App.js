@@ -6,8 +6,6 @@ import Login from './screens/Login';
 import OnBoard from './screens/OnBoard';
 import Register from './screens/Register';
 import Setting from './screens/Setting';
-import Light from './screens/Light';
-import Fan from './screens/Fan';
 import Siren from './screens/Siren';
 import LightItemDetail from './screens/LightItemDetail';
 import FanItemDetail from './screens/FanItemDetail';
@@ -15,7 +13,8 @@ import { useFonts, loadAsync } from 'expo-font';
 
 import useAuth from './hooks/useAuth';
 
-import TypeList from './screens/TypeList';
+import DeviceList from './screens/DeviceList';
+import DeviceDetail from './screens/DeviceDetail';
 import * as Notifications from 'expo-notifications';
 import React, { useEffect } from 'react';
 
@@ -136,9 +135,11 @@ const MainNavigation = () => {
                 <>
                     <Stack.Screen name="Home" component={Home} />
                     <Stack.Screen name="Setting" component={Setting} />
-                    <Stack.Screen name="TypeList" component={TypeList} />
-                    <Stack.Screen name="Light" component={Light} />
-                    <Stack.Screen name="Fan" component={Fan} />
+                    <Stack.Screen name="DeviceList" component={DeviceList} />
+                    <Stack.Screen
+                        name="DeviceDetail"
+                        component={DeviceDetail}
+                    />
                     <Stack.Screen name="Siren" component={Siren} />
                     <Stack.Screen
                         name="LightItemDetail"

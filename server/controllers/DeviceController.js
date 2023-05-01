@@ -77,9 +77,10 @@ exports.handleChangeStatus = async (req, res) => {
 exports.handleChangeMode = async (req, res) => {
     const { _id } = req.user;
     const id = req.params.id;
-    const updated = await Device.findOneAndUpdate({ _id: id, userId: _id });
-
+    
+    let updated = await Device.findOne({ _id: id, userId: _id });
     updated.changeMode();
+
     res.send('successful');
 };
 
@@ -93,5 +94,15 @@ exports.handleChangeAllStatus = async (req, res) => {
         collection.changeStatus(io_username, io_key, status);
     });
     //await Device.updateMany({ userId: _id, status: !status}, { $set: { status: status } })
+    res.send('successful');
+};
+
+exports.handleChangeValue = async (req, res) => {
+    const { _id, io_username, io_key } = req.user;
+    const { value } = req.body;
+    const id = req.params.id;
+    const updated = await Device.findOne({ _id: id, userId: _id });
+
+    updated.changeValue(io_username, io_key, value);
     res.send('successful');
 };

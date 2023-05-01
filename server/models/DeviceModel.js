@@ -90,4 +90,14 @@ DeviceSchema.methods.changeValue = async function (io_username, io_key, value) {
     }
 };
 
+DeviceSchema.methods.changeMode = async function () {
+    try {
+        if (this.mode == "Thủ công") this.mode = "Tự động";
+        else this.mode = "Thủ công";
+        await this.save();
+    } catch (err) {
+        console.log(err);
+    }
+};
+
 module.exports = mongoose.model('Device', DeviceSchema);

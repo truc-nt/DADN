@@ -2,7 +2,12 @@ import { Text, View, ScrollView, Image } from 'react-native';
 import Profile from '../components/Profile';
 import Device from '../components/Device';
 import NavBar from '../components/NavBar';
-import React, { useLayoutEffect, useState, useCallback } from 'react';
+import React, {
+    useLayoutEffect,
+    useState,
+    useCallback,
+    useEffect,
+} from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 

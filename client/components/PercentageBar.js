@@ -8,9 +8,10 @@ const PercentageBar = (props) => {
     const [value, setValue] = useState(props.value);
     const axiosPrivate = useAxiosPrivate();
 
-    const changeValue = async (value) => {
+    const changeValue = async () => {
+        console.log(value);
         try {
-            const res = await axiosPrivate.put(`fans/value/${props.id}`, {
+            const res = await axiosPrivate.put(`devices/value/${props.id}`, {
                 value: value,
             });
         } catch (err) {
@@ -31,9 +32,9 @@ const PercentageBar = (props) => {
                         style={{ fontFamily: 'LexendMedium' }}
                         className="text-[25px] text-blue"
                         onPress={() => {
-                            changeValue(value);
+                            changeValue();
                             props.setModal(false);
-                            props.setVal(Math.round(value));
+                            props.setValue(Math.round(value));
                         }}
                     >
                         Lưu

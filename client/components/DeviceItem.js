@@ -11,9 +11,9 @@ const DeviceItem = (props) => {
     const navigation = useNavigation();
 
     const axiosPrivate = useAxiosPrivate();
-    const updateStatus = async (type, id) => {
+    const updateStatus = async () => {
         try {
-            const res = await axiosPrivate.put(`devices/status/${type}/${id}`);
+            const res = await axiosPrivate.put(`devices/status/${item._id}`);
             console.log(res.data);
         } catch (err) {
             console.log(err.status);
@@ -23,6 +23,7 @@ const DeviceItem = (props) => {
     useFocusEffect(
         React.useCallback(() => {
             setIsEnabled(item.status);
+            setMode(item.mode);
         }, [props.item])
     );
 
@@ -32,12 +33,13 @@ const DeviceItem = (props) => {
                 props.border ? 'border-b-[1px]' : ''
             } h-[90px]`}
             onPress={() =>
-                navigation.navigate(
+                /*navigation.navigate(
                     `${
                         item?.type[0].toUpperCase() + item?.type?.slice(1)
                     }ItemDetail`,
                     { id: item._id, detail: item }
-                )
+                )*/
+                navigation.navigate('DeviceDetail', { detail: item })
             }
         >
             <View className="flex-row justify-between items-center">
@@ -52,7 +54,7 @@ const DeviceItem = (props) => {
                     thumbColor={'#F4FAFF'}
                     onValueChange={() => {
                         setMode('Thủ công');
-                        updateStatus(item?.type, item._id);
+                        updateStatus();
                         setIsEnabled((previousState) => !previousState);
                     }}
                     value={isEnabled}
@@ -76,26 +78,4 @@ const DeviceItem = (props) => {
     );
 };
 
-const DeviceItemsList = (props) => {
-    return (
-        <View className="h-[78%] w-[100%]">
-            <ScrollView className="w-[100%]">
-                <View className="w-[100%] bg-semiblue rounded-[20px]">
-                    {props?.devicesList?.map((device, index) => (
-                        <DeviceItem
-                            key={index}
-                            item={device}
-                            border={
-                                index == props.devicesList.length - 1
-                                    ? false
-                                    : true
-                            }
-                        />
-                    ))}
-                </View>
-            </ScrollView>
-        </View>
-    );
-};
-
-export default DeviceItemsList;
+export default DeviceItem;

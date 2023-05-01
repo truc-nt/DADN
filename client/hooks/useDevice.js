@@ -62,7 +62,7 @@ export const useGetAll = (type) => {
     const axiosPrivate = useAxiosPrivate();
     useFocusEffect(
         useCallback(() => {
-            console.log("vao ko")
+            console.log('vao ko');
             let isMounted = true;
             const controller = new AbortController();
             const getList = async () => {

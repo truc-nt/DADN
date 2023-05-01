@@ -8,7 +8,7 @@ const LightItemDetail = ({ route, navigation }) => {
         });
     }, []);
     const { id, detail } = route.params;
-
+    console.log(detail);
     return <OnOffDeviceDetail light detail={detail} />;
 };
 
