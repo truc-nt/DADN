@@ -7,17 +7,36 @@ import {
     Modal,
 } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import useGetTimers from '../hooks/useTimer';
+import { useFocusEffect } from '@react-navigation/native';
 
 const formatTime = (date) => {
     date = new Date(date);
     return `${date.getHours() < 10 ? '0' : ''}${date.getHours()}:${
         date.getMinutes() < 10 ? '0' : ''
     }${date.getMinutes()}`;
+};
+
+const sortTime = (timers) => {
+    console.log(timers);
+    if (!timers) return [];
+    return timers.sort((a, b) => {
+        const aDate = new Date(a.from);
+        const bDate = new Date(b.from);
+        const aTime = aDate.getHours() * 60 + aDate.getMinutes();
+        const bTime = bDate.getHours() * 60 + bDate.getMinutes();
+        if (aTime < bTime) {
+            return -1;
+        } else if (aTime > bTime) {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
 };
 
 const TimePick = (props) => {
@@ -306,22 +325,8 @@ const TimeArrange = (props) => {
                             trackColor={{ false: 'white', true: '#5AC2DA' }}
                             thumbColor={'#F4FAFF'}
                             onValueChange={() => {
-                                if (index == 0)
-                                    setTimers([
-                                        { ...time, status: !time.status },
-                                        ...timers.slice(1),
-                                    ]);
-                                else if (index == timers.length - 1)
-                                    setTimers([
-                                        ...timers.slice(0, -1),
-                                        { ...time, status: !time.status },
-                                    ]);
-                                else
-                                    setTimers([
-                                        ...timers.slice(0, index),
-                                        { ...time, status: !time.status },
-                                        ...timers.slice(index + 1),
-                                    ]);
+                                time.status = !time.status;
+                                setTimers(sortTime([...timers]));
                                 changeTimerStatus(time._id);
                             }}
                             value={time.status}

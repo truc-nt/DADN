@@ -7,6 +7,7 @@ import React, {
     useState,
     useCallback,
     useEffect,
+    useRef,
 } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
@@ -14,6 +15,9 @@ import { useFocusEffect } from '@react-navigation/native';
 import useTemp from '../hooks/useTemp';
 import useHumid from '../hooks/useHumid';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
+
+import * as _Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
 
 const Weather = ({ humid, temp }) => {
     return (
@@ -48,6 +52,18 @@ const Weather = ({ humid, temp }) => {
     );
 };
 
+Notifications.setNotificationHandler({
+    handleNotification: async () => {
+        //console.log('help');
+        //Alert.alert('cuu t');
+        return {
+            shouldShowAlert: true,
+            shouldPlaySound: true,
+            shouldSetBadge: true,
+        };
+    },
+});
+
 export default function Home({ navigation }) {
     const temp = useTemp();
     const humid = useHumid();
@@ -59,6 +75,12 @@ export default function Home({ navigation }) {
     }, []);
 
     const axiosPrivate = useAxiosPrivate();
+
+    const [expoPushToken, setExpoPushToken] = useState('');
+    const [notification, setNotification] = useState(false);
+    const notificationListener = useRef();
+    const responseListener = useRef();
+
     const [devices, setDevices] = useState([
         {
             icon: 'lightbulb-outline',
@@ -76,6 +98,33 @@ export default function Home({ navigation }) {
             type: 'siren',
         },
     ]);
+
+    useEffect(() => {
+        registerForPushNotificationsAsync().then(async (token) => {
+            setExpoPushToken(token);
+            const res = await axiosPrivate.post(`/noti`, { token: token });
+        });
+
+        notificationListener.current =
+            Notifications.addNotificationReceivedListener((notification) => {
+                setNotification(notification);
+            });
+
+        responseListener.current =
+            Notifications.addNotificationResponseReceivedListener(
+                (response) => {
+                    console.log(response);
+                }
+            );
+        return () => {
+            Notifications.removeNotificationSubscription(
+                notificationListener.current
+            );
+            Notifications.removeNotificationSubscription(
+                responseListener.current
+            );
+        };
+    }, [notification]);
 
     useFocusEffect(
         useCallback(() => {
@@ -127,4 +176,41 @@ export default function Home({ navigation }) {
             <NavBar home />
         </SafeAreaView>
     );
+}
+
+async function registerForPushNotificationsAsync() {
+    let token;
+
+    if (Platform.OS === 'android') {
+        await Notifications.setNotificationChannelAsync('default', {
+            name: 'default',
+            importance: Notifications.AndroidImportance.MAX,
+            vibrationPattern: [0, 250, 250, 250],
+            lightColor: '#FF231F7C',
+        });
+    }
+
+    if (_Device.isDevice) {
+        const { status: existingStatus } =
+            await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+        if (existingStatus !== 'granted') {
+            const { status } = await Notifications.requestPermissionsAsync();
+            finalStatus = status;
+        }
+        if (finalStatus !== 'granted') {
+            alert('Failed to get push token for push notification!');
+            return;
+        }
+        token = (
+            await Notifications.getExpoPushTokenAsync({
+                projectId: '5c0e6007-62fc-4d44-88bc-50909f8fd193',
+            })
+        ).data;
+        console.log(token);
+    } else {
+        alert('Must use physical device for Push Notifications');
+    }
+
+    return token;
 }

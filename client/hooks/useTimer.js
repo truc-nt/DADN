@@ -14,7 +14,24 @@ const useGetTimers = (deviceId) => {
                     const res = await axiosPrivate.get(`/timers/${deviceId}`, {
                         signal: controller.signal,
                     });
-                    isMounted && setTimers(res.data);
+                    isMounted &&
+                        setTimers(
+                            res.data.sort((a, b) => {
+                                const aDate = new Date(a.from);
+                                const bDate = new Date(b.from);
+                                const aTime =
+                                    aDate.getHours() * 60 + aDate.getMinutes();
+                                const bTime =
+                                    bDate.getHours() * 60 + bDate.getMinutes();
+                                if (aTime < bTime) {
+                                    return -1;
+                                } else if (aTime > bTime) {
+                                    return 1;
+                                } else {
+                                    return 0;
+                                }
+                            })
+                        );
                 } catch (err) {
                     console.log(err);
                 }

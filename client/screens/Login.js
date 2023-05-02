@@ -20,7 +20,7 @@ export const login = async (setAuth, username, password) => {
         const user = res.data.user;
 
         //get NOTIFICATION TOKEN
-        const { status: existingStatus } =
+        /*const { status: existingStatus } =
             await Notifications.getPermissionsAsync();
         let finalStatus = existingStatus;
         if (existingStatus !== 'granted') {
@@ -38,7 +38,7 @@ export const login = async (setAuth, username, password) => {
                     Authorization: `Bearer ${user.accessToken}`,
                 },
             }
-        );
+        );*/
 
         await setAuth(user);
         await AsyncStorage.setItem('user', JSON.stringify(user));

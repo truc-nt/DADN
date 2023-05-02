@@ -31,7 +31,7 @@ app.use('/devices', require('./routes/devices'));
 app.use('/temp', require('./routes/temp'));
 app.use('/humid', require('./routes/humid'));
 
-app.use('/timers', require('./routes/timer'));
+app.use('/timers', require('./routes/timers'));
 app.use('/noti', require('./routes/noti'));
 
 app.listen(PORT, () => {

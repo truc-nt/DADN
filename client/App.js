@@ -9,21 +9,11 @@ import Setting from './screens/Setting';
 import { useFonts, loadAsync } from 'expo-font';
 
 import useAuth from './hooks/useAuth';
-
 import DeviceList from './screens/DeviceList';
 import DeviceDetail from './screens/DeviceDetail';
-import * as Notifications from 'expo-notifications';
+
 import React, { useEffect } from 'react';
-
 const Stack = createNativeStackNavigator();
-
-Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: true,
-    }),
-});
 
 export default function App() {
     const [loaded] = useFonts({
@@ -34,35 +24,7 @@ export default function App() {
         LexendMedium: require('./assets/font/static/Lexend-Medium.ttf'),
     });
 
-    //if (!fontLoaded) return null
-
-    /*const [expoPushToken, setExpoPushToken] = useState('')
-  const [notification, setNotification] = useState(false)
-  const notificationListener = useRef()
-  const responseListener = useRef()*/
-
     useEffect(() => {
-        /*registerForPushNotificationsAsync().then(token => setExpoPushToken(token))
-
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification)
-    })
-
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response)
-      console.log("hello")
-    })
-
-    const subscription = Notifications.addNotificationReceivedListener(notification => {
-      console.log(notification, "hello")
-    })*/
-        const subscription = Notifications.addNotificationReceivedListener(
-            (notification) => {
-                console.log(notification);
-                // Xử lý push notification ở đây
-            }
-        );
-
         async function loadFonts() {
             await loadAsync({
                 LexendExtraLight: require('./assets/font/static/Lexend-ExtraLight.ttf'),
@@ -73,16 +35,12 @@ export default function App() {
             });
         }
         loadFonts();
-        return () => {
-            //Notifications.removeNotificationSubscription(notificationListener.current)
-            //Notifications.removeNotificationSubscription(responseListener.current)
-            subscription.remove();
-        };
     }, []);
 
     if (!loaded) {
         return null;
     }
+    
 
     return (
         <AuthProvider>
@@ -90,31 +48,6 @@ export default function App() {
                 <MainNavigation></MainNavigation>
             </NavigationContainer>
         </AuthProvider>
-        /*<View
-      style={{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'space-around',
-      }}>
-      <Text>Your expo push token: {expoPushToken}</Text>
-      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Title: {notification && notification.request.content.title} </Text>
-        <Text>Body: {notification && notification.request.content.body}</Text>
-        <Text>Data: {notification && JSON.stringify(notification.request.content.data)}</Text>
-      </View>
-      <Button
-        title="Press to schedule a notification"
-        onPress={async () => {
-          await schedulePushNotification();
-        }}
-      />
-      <Button
-        title="Press to cancle a notification"
-        onPress={async () => {
-          await Notifications.cancelAllScheduledNotificationsAsync()
-        }}
-      />
-    </View>*/
     );
 }
 
@@ -142,50 +75,3 @@ const MainNavigation = () => {
         </Stack.Navigator>
     );
 };
-
-/*async function schedulePushNotification() {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "You've got mail! 📬",
-      body: 'Here is the notification body',
-      data: { data: 'goes here' },
-    },
-    trigger: { 
-      hour: 11,
-      minute: 40,
-      repeats: true,
-    },
-  });
-}
-
-async function registerForPushNotificationsAsync() {
-  let token;
-
-  if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-  }
-
-  if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
-  } else {
-    //alert('Must use physical device for Push Notifications');
-  }
-
-  return token;
-}*/

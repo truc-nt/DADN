@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "Fiction Home",
+    "slug": "fiction-home",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -27,12 +28,18 @@
     },
     "extra": {
       "eas": {
-        "projectId": "e9185ded-f467-4cde-9f20-e7a47982f9a7"
+        "projectId": "5c0e6007-62fc-4d44-88bc-50909f8fd193"
       }
     },
     "permissions": [
       "NOTIFICATIONS"
     ],
-    "owner": "pandora241202"
+    "owner": "truc.nt",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/5c0e6007-62fc-4d44-88bc-50909f8fd193"
+    }
   }
 }

@@ -38,21 +38,6 @@ exports.handleAddDevices = async (feedsFromAdafruitServer, userId) => {
     });
 };
 
-exports.handleGetAmount = async (req, res) => {
-    const { _id } = req.user;
-    const { type } = req.params;
-    if (type !== 'undefined') {
-        const devices = await Device.find({ userId: _id, type: type });
-        const status = devices.filter((device) => device.status).length;
-        res.json({
-            amount: devices.length,
-            status: status > 0 ? true : false,
-        });
-    } else {
-        res.send('failed');
-    }
-};
-
 exports.handleGetAll = async (req, res) => {
     const { _id } = req.user;
     const { type } = req.params;

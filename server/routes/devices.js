@@ -15,8 +15,6 @@ const {
 router.use(verifyAccessToken);
 
 router.get('/amount', handleGetDevices);
-
-//router.get('/:type/amount', handleGetAmount);
 router.get('/:type/all', handleGetAll);
 
 router.put('/:type/status', handleChangeAllStatus);
