@@ -40,7 +40,6 @@ export default function App() {
     if (!loaded) {
         return null;
     }
-    
 
     return (
         <AuthProvider>
@@ -54,7 +53,9 @@ export default function App() {
 const MainNavigation = () => {
     const { auth } = useAuth();
     return (
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={{
+            headerShown: false
+          }}>
             {!auth?.username ? (
                 <>
                     <Stack.Screen name="OnBoard" component={OnBoard} />

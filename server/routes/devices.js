@@ -2,24 +2,19 @@ const express = require('express');
 const router = express.Router();
 
 const { verifyAccessToken } = require('../middlewares/authMiddleware');
-const {
-    handleGetDevices,
-    handleGetAmount,
-    handleGetAll,
-    handleChangeAllStatus,
-    handleChangeStatus,
-    handleChangeMode,
-    handleChangeValue,
-} = require('../controllers/deviceController');
+const device = require('../controllers/deviceController');
 
 router.use(verifyAccessToken);
 
-router.get('/amount', handleGetDevices);
-router.get('/:type/all', handleGetAll);
+router.get('/amount', device.handleGetDevices);
+router.get('/:type/all', device.handleGetAll);
 
-router.put('/:type/status', handleChangeAllStatus);
-router.put('/status/:id', handleChangeStatus);
-router.put('/mode/:id', handleChangeMode);
-router.put('/value/:id', handleChangeValue);
+router.put('/:type/status', device.handleChangeAllStatus);
+router.put('/status/:id', device.handleChangeStatus);
+router.put('/mode/:id', device.handleChangeMode);
+router.put('/value/:id', device.handleChangeValue);
+
+router.put('/name/:id', device.handleChangeName);
+router.put('/position/:id', device.handleChangePosition);
 
 module.exports = router;

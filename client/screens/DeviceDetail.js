@@ -15,21 +15,29 @@ const DeviceDetail = ({ route, navigation }) => {
             headerShown: false,
         });
     }, []);
-    const { detail } = route.params;
-    const [name, setName] = useState(detail.name);
-    const [status, setStatus] = useState(detail.status);
+    //const { detail } = route.params;
+    const [detail, setDetail] = useState(route.params.detail)
+    //const [name, setName] = useState(detail.name);
+    //const [status, setStatus] = useState(detail.status);
     const [modalName, setModalName] = useState(false);
     const axiosPrivate = useAxiosPrivate();
 
-    const updateStatus = async (type, id) => {
-        console.log(detail.type, detail._id, type, id);
+    const updateStatus = async (id) => {
         try {
             const res = await axiosPrivate.put(`devices/status/${id}`);
             console.log(res.data);
+            //setStatus((previousState) => !previousState);
+
+            setDetail({...detail, status: !detail.status})
+            //item.status = !isEnabled
+            //setIsEnabled(!isEnabled)
+            
+            if (detail.mode == "Tự động") setDetail({...detail, mode: "Thủ công"})
         } catch (err) {
             console.log(err.status);
         }
     };
+
 
     return (
         <SafeAreaView className="flex-1 bg-lightblue relative px-[5%] items-center">
@@ -41,7 +49,7 @@ const DeviceDetail = ({ route, navigation }) => {
                     style={{ fontFamily: 'LexendSemiBold' }}
                     className="text-[30px] w-[75%] text-center"
                 >
-                    {name}
+                    {detail.name}
                 </Text>
             </View>
             <View className="h-[78%] w-[100%]">
@@ -53,7 +61,7 @@ const DeviceDetail = ({ route, navigation }) => {
                                 style={{ fontFamily: 'LexendSemiBold' }}
                                 className="text-[22px] pr-[10px]"
                             >
-                                {name}
+                                {detail.name}
                             </Text>
                             <TouchableOpacity
                                 onPress={() => setModalName(true)}
@@ -68,25 +76,23 @@ const DeviceDetail = ({ route, navigation }) => {
                         <Switch
                             trackColor={{ false: 'white', true: '#5AC2DA' }}
                             thumbColor={'#F4FAFF'}
-                            onValueChange={() => {
-                                updateStatus(detail.type, detail._id);
-                                //setMode('Thủ công');
-                                setStatus((previousState) => !previousState);
-                                //change on/off of device in server
-                                //change control
-                            }}
-                            value={status}
+                            onValueChange={() => {updateStatus(detail._id)}}
+                            value={detail.status}
                             className="ml-[auto]"
                         />
                     </View>
-                    <DeviceInfo detail={detail}></DeviceInfo>
+                    <DeviceInfo detail={detail} setDetail={setDetail}></DeviceInfo>
                     <TimeArrange device={detail} id={detail._id} />
                     <TextChangeModal
                         visible={modalName}
                         setModal={setModalName}
-                        setText={setName}
-                        text={name}
+                        //setText={setName}
+                        setText={setDetail}
+                        text={detail.name}
                         label="Tên thiết bị"
+                        resource="name"
+                        deviceId={detail._id}
+                        detail={detail}
                     />
                 </ScrollView>
             </View>

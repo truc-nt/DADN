@@ -3,128 +3,62 @@ const Timer = require('../models/TimerModel');
 const schedule = require('node-schedule');
 const User = require('../models/UserModel');
 
-const { Expo } = require('expo-server-sdk');
-const expo = new Expo();
+const { publishData } = require('./mqttController');
+const {pushNotification} = require('./notiController')
 
-const { publishData } = require('../controllers/mqttController');
+
+//const soundFile = fs.readFileSync(path.join(path.dirname(__dirname), 'assets/sounds/Tornado_Siren_II-Delilah-747233690.mp3'), { encoding: 'base64' }).toString('base64');
 
 const timer_map = {};
 
 const scheduleAction = async (user, device, timer) => {
-    const taskStart = schedule.scheduleJob(
-        {
-            hour: timer.from.getHours(),
-            minute: timer.from.getMinutes(),
-            tz: 'Asia/Ho_Chi_Minh',
-        },
-        () => {
-            if (timer.mode === 'Bật') {
-                publishData(user._id, device.key, timer.value);
-            }
-
-            let messages = [];
-            user.pushToken.forEach((token) =>
-                messages.push({
-                    to: token,
-                    sound: 'default',
-                    title: 'Thiết bị được bật',
-                    body: 'Thiết bị đã được bật thành công',
-                    priority: "high",
-                })
-            );
-            let chunks = expo.chunkPushNotifications(messages);
-            let tickets = [];
-            (async () => {
-                for (let chunk of chunks) {
-                    let ticketChunk = await expo.sendPushNotificationsAsync(
-                        chunk
-                    );
-                    tickets.push(...ticketChunk);
+    for (let time of [
+        [timer.from, 'from'],
+        [timer.to, 'to'],
+    ]) {
+        const task = schedule.scheduleJob(
+            {
+                hour: time[0].getHours(),
+                minute: time[0].getMinutes(),
+                tz: 'Asia/Ho_Chi_Minh',
+            },
+            async () => {
+                let body = ''
+                if (timer?.mode === 'Bật') {
+                    if (time[1] === 'from') {
+                        publishData(user._id, device.key, timer.value);
+                        body = `Thiết bị ${device.name} đã đổi thành màu ${timer.value}`
+                    } else {
+                        publishData(user._id, device.key, 0)
+                        body = `Thiết bị ${device.name} đã tắt`
+                    };
+                } else {
+                    if (device.type !== 'siren') device.mode = 'Tự động'
+                    if (time[1] === 'from') {
+                        body = `Thiết bị ${device.name} bật tính năng tự động`
+                        if (device.type !== 'siren') device.value = timer.value
+                        else {
+                            device.value = 0
+                            device.status = true
+                        }
+                    } else {
+                        body = `Thiết bị ${device.name} tắt tính năng tự động`
+                        if (device.type !== 'siren') device.value = 0
+                        else {
+                            device.value = 0
+                            device.status = false
+                        }
+                    };
+                    await device.save()
                 }
-            })();
-            console.log(tickets)
-        }
-    );
-    timer_map[`${timer._id}from`] = taskStart;
-    const taskEnd = schedule.scheduleJob(
-        {
-            hour: timer.to.getHours(),
-            minute: timer.to.getMinutes(),
-            tz: 'Asia/Ho_Chi_Minh',
-        },
-        () => {
-            if (timer.mode === 'Bật') {
-                publishData(user._id, device.key, 0);
+                pushNotification(user, 'Hẹn giờ', body);
             }
-
-            let messages = [];
-            user.pushToken.forEach((token) =>
-                messages.push({
-                    to: token,
-                    sound: 'default',
-                    title: 'Thiết bị được tắt',
-                    body: 'Thiết bị đã được tắt thành công',
-                    priority: "high",
-                })
-            );
-            let chunks = expo.chunkPushNotifications(messages);
-            let tickets = [];
-            (async () => {
-                for (let chunk of chunks) {
-                    let ticketChunk = await expo.sendPushNotificationsAsync(
-                        chunk
-                    );
-                    tickets.push(...ticketChunk);
-                }
-            })();
-            let receiptIds = [];
-for (let ticket of tickets) {
-  // NOTE: Not all tickets have IDs; for example, tickets for notifications
-  // that could not be enqueued will have error information and no receipt ID.
-  if (ticket.id) {
-    receiptIds.push(ticket.id);
-  }
-}
-
-let receiptIdChunks = expo.chunkPushNotificationReceiptIds(receiptIds);
-(async () => {
-  // Like sending notifications, there are different strategies you could use
-  // to retrieve batches of receipts from the Expo service.
-  for (let chunk of receiptIdChunks) {
-    try {
-      let receipts = await expo.getPushNotificationReceiptsAsync(chunk);
-      console.log(receipts);
-
-      // The receipts specify whether Apple or Google successfully received the
-      // notification and information about an error, if one occurred.
-      for (let receiptId in receipts) {
-        let { status, message, details } = receipts[receiptId];
-        if (status === 'ok') {
-          continue;
-        } else if (status === 'error') {
-          console.error(
-            `There was an error sending a notification: ${message}`
-          );
-          if (details && details.error) {
-            // The error codes are listed in the Expo documentation:
-            // https://docs.expo.io/push-notifications/sending-notifications/#individual-errors
-            // You must handle the errors appropriately.
-            console.error(`The error code is ${details.error}`);
-          }
-        }
-      }
-    } catch (error) {
-      console.error(error);
+        );
+        timer_map[`${timer._id}${time[1]}`] = task;
     }
-  }
-})();
-        }
-    );
-    timer_map[`${timer._id}from`] = taskStart;
-    timer_map[`${timer._id}to`] = taskEnd;
 };
 
-exports.scheduleActions = async () => {
+const scheduleActions = async () => {
     const timers = await Timer.find({});
     timers.forEach(async (timer) => {
         if (timer.status) {
@@ -135,36 +69,54 @@ exports.scheduleActions = async () => {
     });
 };
 
-exports.handleGetTimers = async (req, res) => {
+const handleGetTimers = async (req, res) => {
     const id = req.params.deviceId;
     const timers = await Timer.find({ deviceId: id }, { __v: 0, deviceId: 0 });
     res.send(timers);
 };
 
-exports.handleAddTimer = async (req, res) => {
+const handleAddTimer = async (req, res) => {
     const id = req.params.deviceId;
     const { from, to } = req.body;
-    if (req.body.mode) {
-        try {
-            const device = await Device.findOne({ _id: id });
-            const timer = await Timer({
+    const device = await Device.findOne({ _id: id });
+    let timer = ""
+    try {
+        if (req?.body?.mode) {
+            timer = await Timer({
                 from: from,
                 to: to,
                 mode: req.body.mode,
                 deviceId: id,
+                type: device.type
             });
             timer.value = req.body.value ? req.body.value : 100;
-            timer.save();
-            await scheduleAction(req.user, device, timer);
-            return res.status(202).json({ id: timer._id });
-        } catch (err) {
-            console.log('err');
+        } else {
+            timer = await Timer({
+                from: from,
+                to: to,
+                deviceId: id,
+            });
         }
+        timer.save();
+        await scheduleAction(req.user, device, timer);
+    } catch (err) {
+        console.log('err');
+    }
+    res.status(202).json({ id: timer._id });
+};
+
+const handleDeleteTimer = async (req, res) => {
+    const id = req.params.timerId;
+    const timer = await Timer.findByIdAndDelete(id);
+    console.log(timer);
+    if (`${timer._id}from` in timer_map) {
+        timer_map[`${timer._id}from`].cancel();
+        timer_map[`${timer._id}to`].cancel();
     }
     res.status(202).json('successfully');
 };
 
-exports.handleChangeTimerStatus = async (req, res) => {
+const handleChangeTimerStatus = async (req, res) => {
     const id = req.params.timerId;
     console.log(id);
     try {
@@ -180,5 +132,13 @@ exports.handleChangeTimerStatus = async (req, res) => {
     } catch (err) {
         console.log(err);
     }
-    res.send('successful');
+    res.status(202).json('successful');
+};
+
+module.exports = {
+    scheduleActions,
+    handleGetTimers,
+    handleAddTimer,
+    handleDeleteTimer,
+    handleChangeTimerStatus,
 };

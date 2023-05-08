@@ -12,7 +12,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import useGetTimers from '../hooks/useTimer';
-import { useFocusEffect } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 
 const formatTime = (date) => {
     date = new Date(date);
@@ -22,7 +22,6 @@ const formatTime = (date) => {
 };
 
 const sortTime = (timers) => {
-    console.log(timers);
     if (!timers) return [];
     return timers.sort((a, b) => {
         const aDate = new Date(a.from);
@@ -55,9 +54,9 @@ const TimePick = (props) => {
     };
 
     const addTimer = async () => {
+        props.setOpen(false);
         let res = '';
         if (checkValidTimeRange()) {
-            console.log('why');
             try {
                 if (props.device.type === 'light')
                     res = await axiosPrivate.post(
@@ -69,8 +68,13 @@ const TimePick = (props) => {
                         `timers/${props.device._id}`,
                         JSON.stringify({ from, to, mode })
                     );
+                else {
+                    res = await axiosPrivate.post(
+                        `timers/${props.device._id}`,
+                        JSON.stringify({ from, to })
+                    );
+                }
                 const newTimer = res.data;
-                props.setOpen(false);
                 props.setTimers([
                     ...props.timers,
                     {
@@ -78,6 +82,9 @@ const TimePick = (props) => {
                         from: from,
                         to: to,
                         status: true,
+                        value: value,
+                        mode: mode,
+                        type: props.device.type,
                     },
                 ]);
             } catch (err) {
@@ -285,6 +292,8 @@ const TimeArrange = (props) => {
     const [timePick, setTimePick] = useState(false);
     const axiosPrivate = useAxiosPrivate();
 
+    const ledColor = ['Đỏ', 'Xanh lá', 'Xanh dương', 'Cam'];
+
     const changeTimerStatus = async (timerId) => {
         try {
             const res = await axiosPrivate.patch(`timers/${timerId}`);
@@ -294,53 +303,76 @@ const TimeArrange = (props) => {
         }
     };
 
+    const deleteTimer = async (timerId) => {
+        console.log(timerId)
+        try {
+            const res = await axiosPrivate.delete(`timers/${timerId}`);
+            console.log(res.data);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     return (
         <View className="flex w-[100%] bg-semiblue rounded-[20px] items-center px-[5%] mb-[25px]">
             {timers.map((time, index) => (
                 <View
                     key={index}
                     className={
-                        'flex w-[100%] justify-between items-center border-b-[1px]'
+                        'flex-row w-[100%] justify-between items-center border-b-[1px]'
                     }
                 >
-                    <View
-                        className={
-                            'flex-row w-[100%] justify-between items-center mb-[-7px]'
-                        }
-                    >
-                        <Text
-                            numberOfLines={1}
-                            style={{
-                                fontFamily: `${
-                                    time.status
-                                        ? 'LexendRegular'
-                                        : 'LexendExtraLight'
-                                }`,
-                            }}
-                            className="text-[17px]"
-                        >
-                            {formatTime(time.from)} - {formatTime(time.to)}
-                        </Text>
-                        <Switch
-                            trackColor={{ false: 'white', true: '#5AC2DA' }}
-                            thumbColor={'#F4FAFF'}
-                            onValueChange={() => {
-                                time.status = !time.status;
-                                setTimers(sortTime([...timers]));
-                                changeTimerStatus(time._id);
-                            }}
-                            value={time.status}
+                    <View className={'w-[10%] justify-between items-start'}>
+                    <TouchableOpacity onPress={() => {deleteTimer(time._id); setTimers(sortTime(timers.filter(item => item._id !== time._id)))}}>
+                        <Ionicons
+                            name="trash-bin-sharp"
+                            size={20}
+                            color="black"
                         />
+                    </TouchableOpacity>
                     </View>
-                    <View
-                        className={
-                            'flex-row w-[100%] justify-between items-center mb-[10px]'
-                        }
-                    >
-                        <Text className="text-[14px]">{time.mode}</Text>
-                        {time.value && (
-                            <Text className="text-[14px]">{time.value}</Text>
-                        )}
+                    <View className={'w-[90%] justify-between items-end'}>
+                        <View
+                            className={
+                                'flex-row w-[100%] justify-between items-center mb-[-7px]'
+                            }
+                        >
+                            <Text
+                                numberOfLines={1}
+                                style={{
+                                    fontFamily: `${
+                                        time.status
+                                            ? 'LexendRegular'
+                                            : 'LexendExtraLight'
+                                    }`,
+                                }}
+                                className="text-[17px]"
+                            >
+                                {formatTime(time.from)} - {formatTime(time.to)}
+                            </Text>
+                            <Switch
+                                trackColor={{ false: 'white', true: '#5AC2DA' }}
+                                thumbColor={'#F4FAFF'}
+                                onValueChange={() => {
+                                    time.status = !time.status;
+                                    setTimers(sortTime([...timers]));
+                                    changeTimerStatus(time._id);
+                                }}
+                                value={time.status}
+                            />
+                        </View>
+                        <View
+                            className={
+                                'flex-row w-[100%] justify-between items-center mb-[10px]'
+                            }
+                        >
+                            <Text className="text-[14px]">{time.mode}</Text>
+                            {time.value && (
+                                <Text className="text-[14px]">
+                                    {time?.type === "fan" ? time.value : ledColor[time.value - 1]}
+                                </Text>
+                            )}
+                        </View>
                     </View>
                 </View>
             ))}

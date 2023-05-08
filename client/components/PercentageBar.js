@@ -5,14 +5,17 @@ import { MultiArcCircle } from 'react-native-circles';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 const PercentageBar = (props) => {
-    const [value, setValue] = useState(props.value);
+    const [value, setValue] = useState(props.detail.value);
     const axiosPrivate = useAxiosPrivate();
 
     const changeValue = async () => {
         try {
+            props.setModal(false);
             const res = await axiosPrivate.put(`devices/value/${props.id}`, {
-                value: value,
+                value: Math.round(value),
             });
+            console.log(res.data)
+            props.setValue({...props.detail, value: Math.round(value)})
         } catch (err) {
             console.log(err);
         }
@@ -30,11 +33,7 @@ const PercentageBar = (props) => {
                     <Text
                         style={{ fontFamily: 'LexendMedium' }}
                         className="text-[25px] text-blue"
-                        onPress={() => {
-                            changeValue();
-                            props.setModal(false);
-                            props.setValue(Math.round(value));
-                        }}
+                        onPress={() => {changeValue();}}
                     >
                         Lưu
                     </Text>

@@ -10,16 +10,16 @@ import React, {
     useRef,
 } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect } from '@react-navigation/native';
 
-import useTemp from '../hooks/useTemp';
-import useHumid from '../hooks/useHumid';
+import useWeather from '../hooks/useWeather';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 import * as _Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 
-const Weather = ({ humid, temp }) => {
+import {useGetDevices} from '../hooks/useDevice'
+
+const Weather = ({ weather }) => {
     return (
         <View className="flex-row h-[120px] w-[100%] rounded-[20px] bg-blue items-center justify-between px-[5%]">
             <View className="flex-col">
@@ -27,25 +27,25 @@ const Weather = ({ humid, temp }) => {
                     style={{ fontFamily: 'LexendMedium' }}
                     className={`text-[14px] leading-[21px]`}
                 >
-                    Trời nhiều mây
+                    {weather?.text}
                 </Text>
                 <Text
                     style={{ fontFamily: 'LexendSemiBold' }}
                     className={`text-[25px]`}
                 >
-                    {temp}°C
+                    {weather?.temp}°C
                 </Text>
                 <Text
                     style={{ fontFamily: 'LexendRegular' }}
                     className={`text-[12px] leading-[21px]`}
                 >
-                    Độ ẩm {humid}%
+                    Độ ẩm {weather?.humid}%
                 </Text>
             </View>
             <View>
                 <Image
-                    source={require('../assets/image/SunnyWeather.png')}
-                    className="w-[90px] h-[80px]"
+                    source={{uri :`https:${weather?.image}`}}
+                    className="w-[100px] h-[100px]"
                 />
             </View>
         </View>
@@ -54,8 +54,6 @@ const Weather = ({ humid, temp }) => {
 
 Notifications.setNotificationHandler({
     handleNotification: async () => {
-        //console.log('help');
-        //Alert.alert('cuu t');
         return {
             shouldShowAlert: true,
             shouldPlaySound: true,
@@ -64,15 +62,8 @@ Notifications.setNotificationHandler({
     },
 });
 
-export default function Home({ navigation }) {
-    const temp = useTemp();
-    const humid = useHumid();
-
-    useLayoutEffect(() => {
-        navigation.setOptions({
-            headerShown: false,
-        });
-    }, []);
+export default function Home() {
+    const weather = useWeather();
 
     const axiosPrivate = useAxiosPrivate();
 
@@ -81,28 +72,12 @@ export default function Home({ navigation }) {
     const notificationListener = useRef();
     const responseListener = useRef();
 
-    const [devices, setDevices] = useState([
-        {
-            icon: 'lightbulb-outline',
-            name: 'Đèn',
-            type: 'light',
-        },
-        {
-            icon: 'fan',
-            name: 'Quạt',
-            type: 'fan',
-        },
-        {
-            icon: 'bell-alert-outline',
-            name: 'Chống trộm',
-            type: 'siren',
-        },
-    ]);
+    const [devices, _] = useGetDevices()
 
     useEffect(() => {
         registerForPushNotificationsAsync().then(async (token) => {
             setExpoPushToken(token);
-            const res = await axiosPrivate.post(`/noti`, { token: token });
+            await axiosPrivate.post(`/noti`, { token: token });
         });
 
         notificationListener.current =
@@ -126,44 +101,19 @@ export default function Home({ navigation }) {
         };
     }, [notification]);
 
-    useFocusEffect(
-        useCallback(() => {
-            const controller = new AbortController();
-            const getAmount = async () => {
-                try {
-                    const res = await axiosPrivate.get(`devices/amount`, {
-                        signal: controller.signal,
-                    });
-                    let newDevices = [...devices];
-                    newDevices.forEach((device) => {
-                        device['amount'] = res.data[device.type]['amount'];
-                        device['enabled'] = res.data[device.type]['enabled'];
-                    });
-                    setDevices(newDevices);
-                } catch (err) {
-                    console.log(err);
-                }
-            };
-            getAmount();
-
-            return () => {
-                controller.abort();
-            };
-        }, [])
-    );
 
     return (
         <SafeAreaView className="flex-1 bg-lightblue relative px-[5%]">
             <Profile />
             <View className="h-[75%] w-[100%]">
                 <ScrollView>
-                    <Weather humid={humid} temp={temp}></Weather>
+                    <Weather weather={weather}></Weather>
                     <View className="h-[50px] justify-center">
                         <Text
                             style={{ fontFamily: 'LexendRegular' }}
                             className={`text-[18px] leading-[27px]`}
                         >
-                            Các thiết bị kết nối
+                            Các thiết bị
                         </Text>
                     </View>
                     <View className="flex-row flex-wrap justify-between w-[100%]">
@@ -184,9 +134,17 @@ async function registerForPushNotificationsAsync() {
     if (Platform.OS === 'android') {
         await Notifications.setNotificationChannelAsync('default', {
             name: 'default',
+            //importance: Notifications.AndroidImportance.MAX,
+            vibrationPattern: [0, 250, 250, 250],
+            lightColor: '#FF231F7C',
+        });
+
+        await Notifications.setNotificationChannelAsync('alert', {
+            name: 'alert',
             importance: Notifications.AndroidImportance.MAX,
             vibrationPattern: [0, 250, 250, 250],
             lightColor: '#FF231F7C',
+            sound: 'Tornado_Siren_II-Delilah-747233690.mp3',
         });
     }
 

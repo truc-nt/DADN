@@ -10,7 +10,7 @@ router.get('/', verifyAccessToken, async (req, res) => {
     try {
         const result = await axios.get(
             `https://io.adafruit.com/api/v2/${io_username}/feeds/bbc-humi?x-aio-key=${io_key}`,
-            {timeout: 60000} 
+            { timeout: 60000 }
         );
         return res.send(result.data.last_value);
     } catch (err) {

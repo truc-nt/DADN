@@ -40,6 +40,14 @@
     },
     "updates": {
       "url": "https://u.expo.dev/5c0e6007-62fc-4d44-88bc-50909f8fd193"
-    }
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "sounds": ["./assets/sounds/Tornado_Siren_II-Delilah-747233690.mp3"]
+        }
+      ]
+    ]
   }
 }

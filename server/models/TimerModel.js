@@ -29,6 +29,10 @@ const TimerSchema = new mongoose.Schema(
             required: true,
             ref: 'Device',
         },
+        type: {
+            type: String,
+            enum: ['light', 'fan', 'siren'],
+        },
     },
     { timestamps: true }
 );

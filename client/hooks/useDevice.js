@@ -26,43 +26,41 @@ export const useGetDevices = () => {
         useCallback(() => {
             let isMounted = true;
             const controller = new AbortController();
-            const getAmount = async (type) => {
+            const getAmount = async () => {
                 try {
                     const res = await axiosPrivate.get(
-                        `devices/${type}/amount`,
+                        `devices/amount`,
                         {
                             signal: controller.signal,
                         }
                     );
-
+                    let newDevices = [...devices];
+                    newDevices.forEach((device) => {
+                        device['amount'] = res.data[device.type]['amount'];
+                        device['enabled'] = res.data[device.type]['enabled'];
+                    });
+                    isMounted && setDevices(newDevices);
                     return res.data;
                 } catch (err) {
                     console.log(err);
                 }
             };
-
-            let temp = devices;
-            temp.forEach(async (device, index) => {
-                const res = await getAmount(device.type);
-                temp[index].amount = res?.amount;
-                temp[index].enabled = res?.status;
-            });
-            isMounted && setDevices(temp);
+            getAmount();
             return () => {
                 controller.abort();
                 isMounted = false;
             };
         }, [])
     );
-    return devices;
+    return [devices, setDevices];
 };
 
-export const useGetAll = (type) => {
-    const [list, setList] = useState({});
+export const useGetList = (type) => {
+    const [list, setList] = useState([]);
     const axiosPrivate = useAxiosPrivate();
+    
     useFocusEffect(
         useCallback(() => {
-            console.log('vao ko');
             let isMounted = true;
             const controller = new AbortController();
             const getList = async () => {

@@ -1,8 +1,22 @@
 import { View, Modal, TextInput, TouchableOpacity, Text } from 'react-native';
 import React, { useState } from 'react';
-
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
 const TextChangeModal = (props) => {
     const [text, setText] = useState(props.text);
+    //const [text, setText] = useState(props.detail[props.resource]);
+    const axiosPrivate = useAxiosPrivate();
+    const changeData = async () => {
+        try {
+            const res = await axiosPrivate.put(
+                `devices/${props.resource}/${props.deviceId}`,
+                {data: text}
+            );
+            props.setText({...props.detail, [props.resource]: text})
+            console.log(res.data);
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
     return (
         <Modal
@@ -32,7 +46,7 @@ const TextChangeModal = (props) => {
                             className="text-[20px] text-blue"
                             onPress={() => {
                                 props.setModal(false);
-                                props.setText(text);
+                                changeData();
                             }}
                         >
                             Lưu

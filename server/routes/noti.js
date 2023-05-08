@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const { verifyAccessToken } = require('../middlewares/authMiddleware');
-const { addToken } = require('../controllers/notiController');
+const { handleAddToken } = require('../controllers/notiController');
 
-router.post('/', verifyAccessToken, addToken);
+router.post('/', verifyAccessToken, handleAddToken);
 
 module.exports = router;

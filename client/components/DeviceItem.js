@@ -6,6 +6,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 const DeviceItem = (props) => {
     const { item } = props;
+    const [detail, setDetail] = useState(item)
     const [isEnabled, setIsEnabled] = useState(item.status);
     const [mode, setMode] = useState(item?.mode);
     const navigation = useNavigation();
@@ -15,6 +16,12 @@ const DeviceItem = (props) => {
         try {
             const res = await axiosPrivate.put(`devices/status/${item._id}`);
             console.log(res.data);
+            console.log(detail.status)
+            setDetail({...detail, status: !detail.status})
+            //item.status = !isEnabled
+            //setIsEnabled(!isEnabled)
+            
+            if (detail.mode == "Tự động") setDetail({...detail, mode: "Thủ công"})
         } catch (err) {
             console.log(err.status);
         }
@@ -22,9 +29,10 @@ const DeviceItem = (props) => {
 
     useFocusEffect(
         React.useCallback(() => {
-            setIsEnabled(item.status);
-            setMode(item.mode);
-        }, [props.item])
+            setDetail({...item})
+            //setIsEnabled(item.status);
+            //setMode(item.mode);
+        }, [item])
     );
 
     return (
@@ -33,13 +41,7 @@ const DeviceItem = (props) => {
                 props.border ? 'border-b-[1px]' : ''
             } h-[90px]`}
             onPress={() =>
-                /*navigation.navigate(
-                    `${
-                        item?.type[0].toUpperCase() + item?.type?.slice(1)
-                    }ItemDetail`,
-                    { id: item._id, detail: item }
-                )*/
-                navigation.navigate('DeviceDetail', { detail: item })
+                navigation.navigate('DeviceDetail', { detail: detail })
             }
         >
             <View className="flex-row justify-between items-center">
@@ -47,17 +49,13 @@ const DeviceItem = (props) => {
                     style={{ fontFamily: 'LexendMedium' }}
                     className="text-[20px] leading-[21px]"
                 >
-                    {item.name}
+                    {detail.name}
                 </Text>
                 <Switch
                     trackColor={{ false: 'white', true: '#5AC2DA' }}
                     thumbColor={'#F4FAFF'}
-                    onValueChange={() => {
-                        setMode('Thủ công');
-                        updateStatus();
-                        setIsEnabled((previousState) => !previousState);
-                    }}
-                    value={isEnabled}
+                    onValueChange={() => {updateStatus();}}
+                    value={detail.status}
                 />
             </View>
             <View className="flex-row justify-between">
@@ -65,13 +63,13 @@ const DeviceItem = (props) => {
                     style={{ fontFamily: 'LexendRegular' }}
                     className="text-[13px] leading-[21px] text-grey"
                 >
-                    {item.position}
+                    {detail.position}
                 </Text>
                 <Text
                     style={{ fontFamily: 'LexendRegular' }}
                     className="text-[13px] leading-[21px] text-grey"
                 >
-                    {mode}
+                    {detail.mode}
                 </Text>
             </View>
         </TouchableOpacity>

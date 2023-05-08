@@ -13,7 +13,7 @@ export default function Device({ props }) {
 
     const updateStatusAll = async (type, status) => {
         try {
-            await axiosPrivate.put(`devices/${type}/status/$`, {
+            await axiosPrivate.put(`devices/${type}/status`, {
                 status: status,
             });
         } catch (err) {

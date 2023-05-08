@@ -13,68 +13,17 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { useFocusEffect } from '@react-navigation/native';
 import DeviceItem from '../components/DeviceItem';
 
-const DeviceList = ({ route, navigation }) => {
+import {useGetList} from '../hooks/useDevice' 
+
+const DeviceList = ({ navigation, route }) => {
     const { type } = route.params;
-    const [list, setList] = useState([]);
-    const axiosPrivate = useAxiosPrivate();
+    const list = useGetList(type)
 
     const name = {
         light: 'Đèn',
         fan: 'Quạt',
         siren: 'Chống trộm',
     };
-
-    useLayoutEffect(() => {
-        navigation.setOptions({
-            headerShown: false,
-        });
-    }, []);
-
-    useEffect(() => {
-        let isMounted = true;
-        const controller = new AbortController();
-        const getList = async (type) => {
-            try {
-                const res = await axiosPrivate.get(`devices/${type}/all`, {
-                    signal: controller.signal,
-                });
-
-                isMounted && setList(res.data);
-            } catch (err) {
-                console.log(err);
-            }
-        };
-        getList(type);
-
-        return () => {
-            isMounted = false;
-            controller.abort();
-        };
-    }, []);
-
-    useFocusEffect(
-        useCallback(() => {
-            let isMounted = true;
-            const controller = new AbortController();
-            const getList = async (type) => {
-                try {
-                    const res = await axiosPrivate.get(`devices/${type}/all`, {
-                        signal: controller.signal,
-                    });
-
-                    isMounted && setList(res.data);
-                } catch (err) {
-                    console.log(err);
-                }
-            };
-            getList(type);
-
-            return () => {
-                isMounted = false;
-                controller.abort();
-            };
-        }, [])
-    );
 
     return (
         <SafeAreaView className="flex-1 bg-lightblue relative px-[5%] items-center">

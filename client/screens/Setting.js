@@ -96,7 +96,7 @@ const Setting = ({ navigation }) => {
 
     const { auth, setAuth } = useAuth();
 
-    const [username, setUsername] = useState(user.username);
+    const [username, setUsername] = useState(auth.username);
     const [password, setPassword] = useState(user.password);
     const [modalName, setModalName] = useState(false);
     const [modalPw, setModalPw] = useState(false);
