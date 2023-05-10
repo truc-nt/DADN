@@ -9,15 +9,23 @@ const PercentageBar = (props) => {
     const axiosPrivate = useAxiosPrivate();
 
     const changeValue = async () => {
-        try {
+        if (props.setDetail) {
+            try {
+                props.setModal(false);
+                const res = await axiosPrivate.put(
+                    `devices/value/${props.id}`,
+                    {
+                        value: Math.round(value),
+                    }
+                );
+                console.log(res.data);
+                props.setDetail({ ...props.detail, value: Math.round(value) });
+            } catch (err) {
+                console.log(err);
+            }
+        } else {
             props.setModal(false);
-            const res = await axiosPrivate.put(`devices/value/${props.id}`, {
-                value: Math.round(value),
-            });
-            console.log(res.data)
-            props.setValue({...props.detail, value: Math.round(value)})
-        } catch (err) {
-            console.log(err);
+            props.setValue(Math.round(value));
         }
     };
 
@@ -33,7 +41,9 @@ const PercentageBar = (props) => {
                     <Text
                         style={{ fontFamily: 'LexendMedium' }}
                         className="text-[25px] text-blue"
-                        onPress={() => {changeValue();}}
+                        onPress={() => {
+                            changeValue();
+                        }}
                     >
                         Lưu
                     </Text>

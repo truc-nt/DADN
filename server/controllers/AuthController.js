@@ -51,7 +51,7 @@ const handleLogin = async (req, res) => {
     const refreshToken = jwt.sign(
         { _id: user._id },
         process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: '7d' }
+        { expiresIn: '14d' }
     );
     user.refreshToken = [...user.refreshToken, refreshToken];
     await user.save();
@@ -81,12 +81,12 @@ const handleLogout = async (req, res) => {
     console.log(refreshToken);
     const user = await User.findOne({ refreshToken });
 
-    if (!user) return res.sendStatus(204);
+    if (!user) return res.status(204).json('err');
 
     user.refreshToken = user.refreshToken.filter((rt) => rt !== refreshToken);
     const result = await user.save();
     console.log(result);
-    res.sendStatus(202);
+    res.status(202).json('okei');
 };
 
 module.exports = { handleRegister, handleLogin, handleLogout };

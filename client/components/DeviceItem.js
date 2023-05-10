@@ -6,7 +6,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 const DeviceItem = (props) => {
     const { item } = props;
-    const [detail, setDetail] = useState(item)
+    const [detail, setDetail] = useState(item);
     const [isEnabled, setIsEnabled] = useState(item.status);
     const [mode, setMode] = useState(item?.mode);
     const navigation = useNavigation();
@@ -15,13 +15,12 @@ const DeviceItem = (props) => {
     const updateStatus = async () => {
         try {
             const res = await axiosPrivate.put(`devices/status/${item._id}`);
-            console.log(res.data);
-            console.log(detail.status)
-            setDetail({...detail, status: !detail.status})
-            //item.status = !isEnabled
-            //setIsEnabled(!isEnabled)
-            
-            if (detail.mode == "Tự động") setDetail({...detail, mode: "Thủ công"})
+            const status = detail.status
+            if (detail.mode === 'Tự động')
+                setDetail({ ...detail, mode: 'Thủ công', status: !status });
+            else {
+                setDetail({ ...detail, status: !status });
+            }
         } catch (err) {
             console.log(err.status);
         }
@@ -29,7 +28,7 @@ const DeviceItem = (props) => {
 
     useFocusEffect(
         React.useCallback(() => {
-            setDetail({...item})
+            setDetail({ ...item });
             //setIsEnabled(item.status);
             //setMode(item.mode);
         }, [item])
@@ -54,7 +53,9 @@ const DeviceItem = (props) => {
                 <Switch
                     trackColor={{ false: 'white', true: '#5AC2DA' }}
                     thumbColor={'#F4FAFF'}
-                    onValueChange={() => {updateStatus();}}
+                    onValueChange={() => {
+                        updateStatus();
+                    }}
                     value={detail.status}
                 />
             </View>

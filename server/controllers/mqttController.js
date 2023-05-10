@@ -4,7 +4,7 @@ const Device = require('../models/DeviceModel');
 
 const clients = {};
 
-const {pushNotification} = require('./notiController')
+const { pushNotification } = require('./notiController');
 
 const connectPublisher = async (userId) => {
     const client = clients[userId];
@@ -24,28 +24,46 @@ const connectPublisher = async (userId) => {
             const key = topic.substring(topic.lastIndexOf('/') + 1);
             const device = await Device.findOne({ key: key, userId: userId });
             if (device) {
-                if (device.status &&  message.toString() === 'WARNING' && device.value === 0) {
-                    device.value = 1
-                    const user = await User.findOne({_id: userId})
-                    pushNotification(user, 'Cảnh báo', `${device.position} đang có người`);
-                    const devices = await Device.find({ userId: userId })
-                    devices.forEach(device => {
-                        
-                        if (device.type !== 'siren' && device.mode === 'Tự động' && !device.status) publishData(userId, device.key, device.value)
-                    })
-                } else if (device.status && message.toString() === 'NONE' && device.value === 1) {
-                    device.value = 0
-                    const devices = await Device.find({ userId: userId })
-                    devices.forEach(device => {
-                        console.log(device.type !== 'siren' && device.mode === 'Tự động')
-                        if (device.type !== 'siren' && device.mode === 'Tự động' && device.value !== '0') publishData(userId, device.key, 0)
-                    })
+                if (device.status && message.toString() === 'WARNING') {
+                    if (device.value === 0) {
+                        device.value = 1;
+                        const user = await User.findOne({ _id: userId });
+                        pushNotification(
+                            user,
+                            'Cảnh báo',
+                            `${device.position} đang có người`
+                        );
+                    }
+                    const devices = await Device.find({ userId: userId });
+                    devices.forEach((tmp) => {
+                        if (
+                            tmp.type !== 'siren' &&
+                            tmp.mode === 'Tự động' &&
+                            !tmp.status
+                        )
+                            publishData(userId, tmp.key, tmp.value);
+                    });
+                } else if (device.status && message.toString() === 'NONE') {
+                    if (device.value === 1) device.value = 0;
+                    const devices = await Device.find({ userId: userId });
+                    devices.forEach((tmp) => {
+                        if (
+                            tmp.type !== 'siren' &&
+                            tmp.mode === 'Tự động' &&
+                            tmp.value !== '0'
+                        )
+                            publishData(userId, tmp.key, 0);
+                    });
                 } else if (device.type !== 'siren') {
                     if (parseInt(message) === 0) {
-                        device.status = false
+                        device.status = false;
                     } else {
-                        device.value = parseInt(message);
-                        device.status = parseInt(message) > 0 ? true : false
+                        let value = parseInt(message)
+                        if (device.type === 'light' && value > 4) value = 4;
+                        else if (device.type === 'fan' && value > 100) value = 100;
+                        else if (device.type === 'fan' && value < 0) value = device.value
+                        device.value = value;
+                        device.status = value > 0 ? true : false;
                     }
                 }
                 await device.save();

@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const app = express();
 
 require('dotenv').config();
-require('./models/db');
+//require('./models/db');
 
 const mqtt = require('./controllers/mqttController');
 const timer = require('./controllers/timerController');
@@ -28,12 +28,12 @@ app.use('/logout', require('./routes/logout'));
 
 app.use('/user', require('./routes/user'));
 app.use('/devices', require('./routes/devices'));
-app.use('/temp', require('./routes/temp'));
-app.use('/humid', require('./routes/humid'));
 
 app.use('/timers', require('./routes/timers'));
 app.use('/noti', require('./routes/noti'));
 app.use('/weather', require('./routes/weather'));
+
+app.use('/user', require('./routes/user'));
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

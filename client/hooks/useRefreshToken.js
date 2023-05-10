@@ -1,19 +1,29 @@
 import React from 'react';
 import useAuth from './useAuth';
 import axiosPrivate from '../api/axios';
+import axios from '../api/axios';
 
 const useRefreshToken = () => {
     const { auth, setAuth } = useAuth();
 
     const refresh = async () => {
-        const res = await axiosPrivate.post('/refresh', {
-            refreshToken: auth.refreshToken,
-        });
+        try {
+            const res = await axiosPrivate.post('/refresh', {
+                refreshToken: auth.refreshToken,
+            });
 
-        setAuth((prev) => {
-            return { ...prev, accessToken: res.data.accessToken };
-        });
-        return res.data.accessToken;
+            setAuth((prev) => {
+                return { ...prev, accessToken: res.data.accessToken };
+            });
+            return res.data.accessToken;
+        } catch (err) {
+            console.log(err);
+            /*await axiosPrivate.post(`/logout`, {
+                refreshToken: auth.refreshToken,
+            });*/
+            await setAuth({});
+            await AsyncStorage.removeItem('user');
+        }
     };
     return refresh;
 };

@@ -37,6 +37,14 @@ const handleGetDevices = async (req, res) => {
     res.status(202).json(ans);
 };
 
+const handleGetDevice = async (req, res) => {
+    const { _id } = req.user;
+    const id = req.params.id;
+    console.log(_id, id)
+    //const device = await Device.findOne({ _id: id, userId: _id });
+    return res.status(202).json(_id);
+};
+
 const handleGetAll = async (req, res) => {
     const { _id } = req.user;
     const { type } = req.params;
@@ -86,28 +94,29 @@ const handleChangeValue = async (req, res) => {
 };
 
 const handleChangeName = async (req, res) => {
-    const {_id} = req.user;
+    const { _id } = req.user;
     const id = req.params.id;
     const { data } = req.body;
-    await Device.findOneAndUpdate({ _id: id, userId: _id }, {name: data});
+    await Device.findOneAndUpdate({ _id: id, userId: _id }, { name: data });
     res.status(200).json('successful');
-}
+};
 
 const handleChangePosition = async (req, res) => {
-    const {_id} = req.user;
+    const { _id } = req.user;
     const id = req.params.id;
     const { data } = req.body;
-    await Device.findOneAndUpdate({ _id: id, userId: _id }, {position: data});
+    await Device.findOneAndUpdate({ _id: id, userId: _id }, { position: data });
     res.status(200).json('successful');
-}
+};
 
 module.exports = {
     handleGetDevices,
+    handleGetDevice,
     handleGetAll,
     handleChangeStatus,
     handleChangeMode,
     handleChangeAllStatus,
     handleChangeValue,
     handleChangeName,
-    handleChangePosition
+    handleChangePosition,
 };

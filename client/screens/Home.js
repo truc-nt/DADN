@@ -1,4 +1,4 @@
-import { Text, View, ScrollView, Image } from 'react-native';
+import { Text, View, ScrollView, Image, RefreshControl } from 'react-native';
 import Profile from '../components/Profile';
 import Device from '../components/Device';
 import NavBar from '../components/NavBar';
@@ -17,7 +17,7 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import * as _Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 
-import {useGetDevices} from '../hooks/useDevice'
+import { useGetDevices } from '../hooks/useDevice';
 
 const Weather = ({ weather }) => {
     return (
@@ -44,7 +44,7 @@ const Weather = ({ weather }) => {
             </View>
             <View>
                 <Image
-                    source={{uri :`https:${weather?.image}`}}
+                    source={{ uri: `https:${weather?.image}` }}
                     className="w-[100px] h-[100px]"
                 />
             </View>
@@ -63,7 +63,7 @@ Notifications.setNotificationHandler({
 });
 
 export default function Home() {
-    const weather = useWeather();
+    
 
     const axiosPrivate = useAxiosPrivate();
 
@@ -72,7 +72,19 @@ export default function Home() {
     const notificationListener = useRef();
     const responseListener = useRef();
 
-    const [devices, _] = useGetDevices()
+    
+    const [refreshing, setRefreshing] = React.useState(false);
+    const [devices, _] = useGetDevices(refreshing)
+    const weather = useWeather(refreshing);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+          setRefreshing(false);
+        }, 2000);
+      }, []);
+
+    
 
     useEffect(() => {
         registerForPushNotificationsAsync().then(async (token) => {
@@ -101,12 +113,14 @@ export default function Home() {
         };
     }, [notification]);
 
-
     return (
         <SafeAreaView className="flex-1 bg-lightblue relative px-[5%]">
             <Profile />
             <View className="h-[75%] w-[100%]">
-                <ScrollView>
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }>
                     <Weather weather={weather}></Weather>
                     <View className="h-[50px] justify-center">
                         <Text

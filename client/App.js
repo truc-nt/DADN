@@ -53,9 +53,11 @@ export default function App() {
 const MainNavigation = () => {
     const { auth } = useAuth();
     return (
-        <Stack.Navigator screenOptions={{
-            headerShown: false
-          }}>
+        <Stack.Navigator
+            screenOptions={{
+                headerShown: false,
+            }}
+        >
             {!auth?.username ? (
                 <>
                     <Stack.Screen name="OnBoard" component={OnBoard} />

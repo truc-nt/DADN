@@ -16,7 +16,6 @@ exports.handleAddToken = async (req, res) => {
     res.status(202).send('successful');
 };
 
-
 exports.pushNotification = async (user, title, body) => {
     const message = {
         to: user.pushToken,
@@ -34,3 +33,36 @@ exports.pushNotification = async (user, title, body) => {
         console.log(err);
     }
 };
+
+/*const ledColor = ['đỏ', 'xanh lá', 'xanh dương', 'cam'];
+
+class NotificationStrategy {
+    sendNotification(recipient, message) {
+      throw new Error('sendNotification not implemented');
+    }
+  }
+  
+class LightNotificationStrategy extends NotificationStrategy {
+    sendNotification(recipient, name, value) {
+        pushNotification(recipient, name, `Thiết bị ${name} đã đổi thành màu ${value}`)
+    }
+}
+  
+class FanNotificationStrategy extends NotificationStrategy {
+    sendNotification(recipient, name, value) {
+        pushNotification(recipient, name, `Thiết bị ${name} đã đổi thành tốc độ ${value}`)
+    }
+}
+  
+class NotificationService {
+    constructor(strategy) {
+      this.strategy = strategy;
+      this.recipient = recipient;
+    }
+  
+    sendNotification(message) {
+      this.strategy.sendNotification();
+    }
+
+    pushNotification
+}*/

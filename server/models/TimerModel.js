@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 
+const Database = require('./db');
+
+const db = new Database();
+
 const TimerSchema = new mongoose.Schema(
     {
         from: {
@@ -19,7 +23,7 @@ const TimerSchema = new mongoose.Schema(
         },
         mode: {
             type: String,
-            enum: ['Bật', 'Tự động'],
+            enum: ['Thủ công', 'Tự động'],
         },
         value: {
             type: Number,
@@ -37,4 +41,5 @@ const TimerSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-module.exports = mongoose.model('Timer', TimerSchema);
+//module.exports = mongoose.model('Timer', TimerSchema);
+module.exports = db.getModel('Timer', TimerSchema);

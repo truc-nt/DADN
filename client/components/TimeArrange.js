@@ -14,6 +14,8 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import useGetTimers from '../hooks/useTimer';
 import { Ionicons } from '@expo/vector-icons';
 
+import PercentageBar from './PercentageBar';
+
 const formatTime = (date) => {
     date = new Date(date);
     return `${date.getHours() < 10 ? '0' : ''}${date.getHours()}:${
@@ -43,9 +45,9 @@ const TimePick = (props) => {
     const [to, setTo] = useState(new Date());
     const [fromPick, setFromPick] = useState(false);
     const [toPick, setToPick] = useState(false);
-    const [mode, setMode] = useState('Bật');
-    const [value, setValue] = useState(1);
-
+    const [mode, setMode] = useState('Thủ công');
+    const [value, setValue] = useState(props.device.type === 'light' ? 1 : 100);
+    const [fanModal, setFanModal] = useState(false);
     const axiosPrivate = useAxiosPrivate();
 
     const checkValidTimeRange = () => {
@@ -58,15 +60,13 @@ const TimePick = (props) => {
         let res = '';
         if (checkValidTimeRange()) {
             try {
-                if (props.device.type === 'light')
+                if (
+                    props.device.type === 'light' ||
+                    props.device.type === 'fan'
+                )
                     res = await axiosPrivate.post(
                         `timers/${props.device._id}`,
                         JSON.stringify({ from, to, mode, value })
-                    );
-                else if (props.device.type === 'fan')
-                    res = await axiosPrivate.post(
-                        `timers/${props.device._id}`,
-                        JSON.stringify({ from, to, mode })
                     );
                 else {
                     res = await axiosPrivate.post(
@@ -75,18 +75,20 @@ const TimePick = (props) => {
                     );
                 }
                 const newTimer = res.data;
-                props.setTimers([
-                    ...props.timers,
-                    {
-                        _id: newTimer['id'],
-                        from: from,
-                        to: to,
-                        status: true,
-                        value: value,
-                        mode: mode,
-                        type: props.device.type,
-                    },
-                ]);
+                props.setTimers(
+                    sortTime([
+                        ...props.timers,
+                        {
+                            _id: newTimer['id'],
+                            from: from,
+                            to: to,
+                            status: true,
+                            value: value,
+                            mode: mode,
+                            type: props.device.type,
+                        },
+                    ])
+                );
             } catch (err) {
                 console.log(err);
             }
@@ -185,10 +187,10 @@ const TimePick = (props) => {
                                         }}
                                     >
                                         <Picker.Item
-                                            label="Bật"
-                                            value={'Bật'}
+                                            label="Thủ công"
+                                            value={'Thủ công'}
                                             color={
-                                                mode === 'Bật'
+                                                mode === 'Thủ công'
                                                     ? '#5AC2DA'
                                                     : 'black'
                                             }
@@ -245,6 +247,37 @@ const TimePick = (props) => {
                                     </View>
                                 </View>
                             )}
+                            {props?.device?.type === 'fan' && (
+                                <View className="flex-row items-center w-[100%]">
+                                    <Text
+                                        style={{ fontFamily: 'LexendRegular' }}
+                                        className="text-[19px] text-blue w-[50%]"
+                                    >
+                                        Tốc độ
+                                    </Text>
+                                    <View className="flex-1">
+                                        <TouchableOpacity
+                                            className="flex-row w-[100%] justify-between h-[65px] items-center"
+                                            onPress={() => setFanModal(true)}
+                                        >
+                                            <Text
+                                                numberOfLines={1}
+                                                style={{
+                                                    fontFamily: 'LexendRegular',
+                                                }}
+                                                className="w-[60%] text-[17px]"
+                                            >
+                                                {value + '%'}
+                                            </Text>
+                                            <AntDesign
+                                                name="right"
+                                                size={24}
+                                                color="black"
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            )}
                         </>
                     )}
                     <TouchableOpacity className="items-center mt-[20px] ml-[auto]">
@@ -283,6 +316,14 @@ const TimePick = (props) => {
                     }}
                 />
             )}
+
+            <PercentageBar
+                visible={fanModal}
+                setModal={setFanModal}
+                id={props.device._id}
+                setValue={setValue}
+                detail={{ value: value }}
+            />
         </Modal>
     );
 };
@@ -304,14 +345,14 @@ const TimeArrange = (props) => {
     };
 
     const deleteTimer = async (timerId) => {
-        console.log(timerId)
+        console.log(timerId);
         try {
             const res = await axiosPrivate.delete(`timers/${timerId}`);
             console.log(res.data);
         } catch (err) {
             console.log(err);
         }
-    }
+    };
 
     return (
         <View className="flex w-[100%] bg-semiblue rounded-[20px] items-center px-[5%] mb-[25px]">
@@ -323,13 +364,24 @@ const TimeArrange = (props) => {
                     }
                 >
                     <View className={'w-[10%] justify-between items-start'}>
-                    <TouchableOpacity onPress={() => {deleteTimer(time._id); setTimers(sortTime(timers.filter(item => item._id !== time._id)))}}>
-                        <Ionicons
-                            name="trash-bin-sharp"
-                            size={20}
-                            color="black"
-                        />
-                    </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => {
+                                deleteTimer(time._id);
+                                setTimers(
+                                    sortTime(
+                                        timers.filter(
+                                            (item) => item._id !== time._id
+                                        )
+                                    )
+                                );
+                            }}
+                        >
+                            <Ionicons
+                                name="trash-bin-sharp"
+                                size={20}
+                                color="black"
+                            />
+                        </TouchableOpacity>
                     </View>
                     <View className={'w-[90%] justify-between items-end'}>
                         <View
@@ -369,7 +421,9 @@ const TimeArrange = (props) => {
                             <Text className="text-[14px]">{time.mode}</Text>
                             {time.value && (
                                 <Text className="text-[14px]">
-                                    {time?.type === "fan" ? time.value : ledColor[time.value - 1]}
+                                    {time?.type === 'fan'
+                                        ? time.value
+                                        : ledColor[time.value - 1]}
                                 </Text>
                             )}
                         </View>

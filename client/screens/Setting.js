@@ -5,6 +5,7 @@ import {
     TouchableOpacity,
     Modal,
     TextInput,
+    Alert,
 } from 'react-native';
 import React, { useState, useLayoutEffect } from 'react';
 import Profile from '../components/Profile';
@@ -21,6 +22,23 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 const PasswordchangeModal = (props) => {
     const [oldPw, setOldPw] = useState('');
     const [newPw, setNewPw] = useState('');
+
+    const axiosPrivate = useAxiosPrivate();
+
+    const changePassword = async () => {
+        try {
+            const res = await axiosPrivate.put(`user/password`, {
+                oldPw: oldPw,
+                newPw: newPw,
+            });
+            setNewPw('');
+            setOldPw('');
+            console.log(res.data);
+            props.setModalPw(false);
+        } catch (err) {
+            Alert.alert('Error', err.response.data);
+        }
+    };
 
     return (
         <Modal
@@ -47,6 +65,7 @@ const PasswordchangeModal = (props) => {
                         style={{ fontFamily: 'LexendRegular' }}
                         className="text-[22px] mt-[10px] border-b-[1px] h-[50px]"
                         autoFocus={true}
+                        secureTextEntry={true}
                     />
                     <Text
                         style={{ fontFamily: 'LexendExtraLight' }}
@@ -59,16 +78,14 @@ const PasswordchangeModal = (props) => {
                         onChangeText={(value) => setNewPw(value)}
                         style={{ fontFamily: 'LexendRegular' }}
                         className="text-[22px] mt-[10px] border-b-[1px] h-[50px]"
+                        secureTextEntry={true}
                     />
                     <TouchableOpacity className="items-center mt-[20px] ml-[auto]">
                         <Text
                             style={{ fontFamily: 'LexendSemiBold' }}
                             className="text-[20px] text-blue"
                             onPress={() => {
-                                props.setModalPw(false);
-                                props.setPassword(newPw);
-                                setNewPw('');
-                                setOldPw('');
+                                changePassword();
                             }}
                         >
                             Lưu
@@ -87,17 +104,11 @@ const Setting = ({ navigation }) => {
         });
     }, []);
 
-    const user = {
-        username: 'Fic Human',
-        password: 'toilanguoi',
-    };
-
     const axiosPrivate = useAxiosPrivate();
 
     const { auth, setAuth } = useAuth();
 
     const [username, setUsername] = useState(auth.username);
-    const [password, setPassword] = useState(user.password);
     const [modalName, setModalName] = useState(false);
     const [modalPw, setModalPw] = useState(false);
 
@@ -156,7 +167,7 @@ const Setting = ({ navigation }) => {
                                     style={{ fontFamily: 'LexendRegular' }}
                                     className="w-[80%] text-[17px] text-grey"
                                 >
-                                    {'*'.repeat(password.length)}
+                                    {'Đổi mật khẩu'}
                                 </Text>
                                 <TouchableOpacity
                                     onPress={() => setModalPw(true)}
@@ -205,11 +216,11 @@ const Setting = ({ navigation }) => {
                             setText={setUsername}
                             text={username}
                             label="Đổi tên đăng nhập"
+                            resource="username"
                         />
                         <PasswordchangeModal
                             visible={modalPw}
                             setModalPw={setModalPw}
-                            setPassword={setPassword}
                         />
                     </View>
                 </ScrollView>

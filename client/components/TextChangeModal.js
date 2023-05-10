@@ -3,15 +3,17 @@ import React, { useState } from 'react';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 const TextChangeModal = (props) => {
     const [text, setText] = useState(props.text);
-    //const [text, setText] = useState(props.detail[props.resource]);
     const axiosPrivate = useAxiosPrivate();
     const changeData = async () => {
+        const url =
+            props.resource !== 'username'
+                ? `devices/${props.resource}/${props.deviceId}`
+                : `user/username`;
         try {
-            const res = await axiosPrivate.put(
-                `devices/${props.resource}/${props.deviceId}`,
-                {data: text}
-            );
-            props.setText({...props.detail, [props.resource]: text})
+            const res = await axiosPrivate.put(url, { data: text });
+            if (props.resource !== 'username')
+                props.setText({ ...props.detail, [props.resource]: text });
+            else props.setText(text);
             console.log(res.data);
         } catch (err) {
             console.log(err);

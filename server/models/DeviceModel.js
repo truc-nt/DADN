@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const axios = require('axios');
 //const {publishData} = require('../controllers/mqttController')
 
+const Database = require('./db');
+
+const db = new Database();
+
 const DeviceSchema = new mongoose.Schema(
     {
         key: {
@@ -47,7 +51,7 @@ DeviceSchema.methods.changeStatus = async function (
     try {
         if (status !== this.status) {
             if (this.type === 'light' || this.type === 'fan') {
-                let value = status ? this.value : 0
+                let value = status ? this.value : 0;
                 this.mode = 'Thủ công';
                 this.status = status;
                 await this.save();
@@ -69,16 +73,14 @@ DeviceSchema.methods.changeStatus = async function (
 
 DeviceSchema.methods.changeValue = async function (io_username, io_key, value) {
     try {
-        /*if (value === 0) {
-            this.status = false
-            this.mode = "Thủ công"
-        } else {
-            this.value = value;
-            if (!this.status && this.mode === 'Thủ công') this.status = true
-        }*/
+        if (this.type === 'light' && value > 4) value = 4;
+        else if (this.type === 'fan') {
+            if (value < 0) value = 0;
+            else if (value > 100) value = 100;
+        }
         this.value = value;
         if (this.mode === 'Thủ công') {
-            if (!this.status) this.status = true
+            if (!this.status) this.status = true;
             await axios.post(
                 `https://io.adafruit.com/api/v2/${io_username}/feeds/${this.key}/data?x-aio-key=${io_key}`,
                 {
@@ -102,4 +104,5 @@ DeviceSchema.methods.changeMode = async function () {
     }
 };
 
-module.exports = mongoose.model('Device', DeviceSchema);
+//module.exports = mongoose.model('Device', DeviceSchema);
+module.exports = db.getModel('Device', DeviceSchema);

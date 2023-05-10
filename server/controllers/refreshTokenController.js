@@ -11,14 +11,14 @@ const handleRefreshToken = async (req, res) => {
             refreshToken,
             process.env.REFRESH_TOKEN_SECRET,
             async (err, decoded) => {
-                if (err) return res.status(403).json({ message: 'wht' });
+                if (err) return res.status(403).json('expired');
                 console.log('attempted refresh token reuse!');
                 const hackedUser = await User.findOne({ _id: decoded._id });
                 hackedUser.refreshToken = [];
                 await hackedUser.save();
             }
         );
-        return res.status(403).json({ message: 'why' });
+        return res.status(403).json('expired');
     }
 
     const newRefreshTokenArray = user.refreshToken.filter(
@@ -38,7 +38,7 @@ const handleRefreshToken = async (req, res) => {
             }
 
             if (err || user._id.toString() !== decoded._id)
-                return res.status(403);
+                return res.status(403).json('expired');
 
             const accessToken = jwt.sign(
                 { _id: user._id },

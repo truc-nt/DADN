@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const axios = require('axios');
 
+const Database = require('./db');
+
+const db = new Database();
+
 const UserSchema = new mongoose.Schema(
     {
         username: {
@@ -79,4 +83,5 @@ UserSchema.pre('save', async function (next) {
     next();
 });
 
-module.exports = mongoose.model('User', UserSchema);
+//module.exports = mongoose.model('User', UserSchema);
+module.exports = db.getModel('User', UserSchema);

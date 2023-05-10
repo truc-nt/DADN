@@ -3,20 +3,21 @@ import { Picker } from '@react-native-picker/picker';
 import React, { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import TextChangeModal from './TextChangeModal';
-import TimeArrange from './TimeArrange';
 import PercentageBar from './PercentageBar';
 
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { AntDesign } from '@expo/vector-icons';
 
-const DeviceInfo = (props) => {
-    const [detail, setDetail] = useState(props.detail)
-    //const [position, setPosition] = useState(props.detail.position);
-    const [modalPosition, setModalPosition] = useState(false);
+import {useEffect} from 'react'
 
-    //const [mode, setMode] = useState(props.detail.mode);
-    //const [value, setValue] = useState(props.detail.status ? props.detail.value : 0);
+const DeviceInfo = (props) => {
+    const [detail, setDetail] = useState(props.detail);
+    const [modalPosition, setModalPosition] = useState(false);
     const [fanModal, setFanModal] = useState(false);
+
+    useEffect(() => {
+        setDetail(props.detail)
+    }, [props.detail])
 
     const ledColor = ['red', 'green', 'blue', 'orange'];
     const changeMode = async () => {
@@ -25,8 +26,9 @@ const DeviceInfo = (props) => {
                 `devices/mode/${props.detail._id}`
             );
             console.log(res.data);
-            if (detail.mode === "Thủ công") setDetail({...detail, mode: "Tự động"})
-            else setDetail({...detail, mode: "Thủ công"})
+            if (detail.mode === 'Thủ công')
+                setDetail({ ...detail, mode: 'Tự động' });
+            else setDetail({ ...detail, mode: 'Thủ công' });
         } catch (err) {
             console.log(err.status);
         }
@@ -43,7 +45,7 @@ const DeviceInfo = (props) => {
                 }
             );
             console.log(res.data);
-            setDetail({...detail, value: value})
+            setDetail({ ...detail, value: value });
         } catch (err) {
             console.log(err);
         }
@@ -79,7 +81,9 @@ const DeviceInfo = (props) => {
                         <View className="flex-1">
                             <Picker
                                 selectedValue={detail.mode}
-                                onValueChange={() => {changeMode();}}
+                                onValueChange={() => {
+                                    changeMode();
+                                }}
                                 style={{
                                     fontFamily: 'LexendBold',
                                     fontSize: 17,
@@ -99,7 +103,9 @@ const DeviceInfo = (props) => {
                                     label="Tự động"
                                     value={'Tự động'}
                                     color={
-                                        detail.mode === 'Tự động' ? '#5AC2DA' : 'black'
+                                        detail.mode === 'Tự động'
+                                            ? '#5AC2DA'
+                                            : 'black'
                                     }
                                 />
                             </Picker>
@@ -117,8 +123,10 @@ const DeviceInfo = (props) => {
                         </Text>
                         <View className="flex-1">
                             <Picker
-                                selectedValue={detail.value}
-                                onValueChange={(itemValue) => {changeColor(itemValue);}}
+                                selectedValue={detail.status ? detail.value : 0}
+                                onValueChange={(itemValue) => {
+                                    changeColor(itemValue);
+                                }}
                                 style={{
                                     fontFamily: 'LexendBold',
                                     fontSize: 17,
@@ -161,7 +169,7 @@ const DeviceInfo = (props) => {
                             style={{ fontFamily: 'LexendMedium' }}
                             className="w-[60%] text-[17px]"
                         >
-                            {'Tốc độ: ' + detail.value + '%'}
+                            {'Tốc độ: ' + (detail.status ? detail.value : 0) + '%'}
                         </Text>
                         <AntDesign name="right" size={24} color="black" />
                     </TouchableOpacity>
@@ -170,7 +178,6 @@ const DeviceInfo = (props) => {
             <TextChangeModal
                 visible={modalPosition}
                 setModal={setModalPosition}
-                //setText={setPosition}
                 setText={setDetail}
                 text={detail.position}
                 label="Vị trí thiết bị"
