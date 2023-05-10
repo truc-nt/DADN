@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { Alert, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useLayoutEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
@@ -21,11 +21,13 @@ const register = async (
             JSON.stringify({ username, password, repwd, io_username, io_key })
         );
         console.log('register');
+        console.log(res.data);
         if (res.data.success) {
             login(setAuth, username, password);
         }
     } catch (err) {
         console.log(err);
+        Alert.alert('Error', err.message);
     }
 };
 const Register = ({ navigation }) => {

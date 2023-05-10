@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const axios = require('axios');
-//const {publishData} = require('../controllers/mqttController')
 
 const Database = require('./db');
 
@@ -104,5 +103,4 @@ DeviceSchema.methods.changeMode = async function () {
     }
 };
 
-//module.exports = mongoose.model('Device', DeviceSchema);
 module.exports = db.getModel('Device', DeviceSchema);

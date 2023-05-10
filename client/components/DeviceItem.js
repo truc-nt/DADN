@@ -15,7 +15,7 @@ const DeviceItem = (props) => {
     const updateStatus = async () => {
         try {
             const res = await axiosPrivate.put(`devices/status/${item._id}`);
-            const status = detail.status
+            const status = detail.status;
             if (detail.mode === 'Tự động')
                 setDetail({ ...detail, mode: 'Thủ công', status: !status });
             else {

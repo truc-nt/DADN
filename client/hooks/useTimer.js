@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import useAxiosPrivate from './useAxiosPrivate';
 import { useFocusEffect } from '@react-navigation/native';
 
-const useGetTimers = (deviceId) => {
+const useGetTimers = (deviceId, refreshing) => {
     const [timers, setTimers] = useState([]);
     const axiosPrivate = useAxiosPrivate();
     useFocusEffect(
@@ -41,7 +41,7 @@ const useGetTimers = (deviceId) => {
                 controller.abort();
                 isMounted = false;
             };
-        }, [])
+        }, [refreshing])
     );
     return [timers, setTimers];
 };

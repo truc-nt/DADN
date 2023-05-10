@@ -46,6 +46,7 @@ UserSchema.statics.isValidUsername = async function (username) {
         console.log('error inside email in use', err.message);
         return false;
     }
+    return true;
 };
 
 UserSchema.statics.isValidAdafruitServer = async function (
@@ -83,5 +84,4 @@ UserSchema.pre('save', async function (next) {
     next();
 });
 
-//module.exports = mongoose.model('User', UserSchema);
 module.exports = db.getModel('User', UserSchema);

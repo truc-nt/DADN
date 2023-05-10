@@ -5,7 +5,13 @@ import React, {
     useEffect,
 } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    ScrollView,
+    RefreshControl,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
 import NavBar from '../components/NavBar';
@@ -17,23 +23,22 @@ import { useGetList } from '../hooks/useDevice';
 
 const DeviceList = ({ navigation, route }) => {
     const { type } = route.params;
-   
 
     const name = {
         light: 'Đèn',
         fan: 'Quạt',
         siren: 'Chống trộm',
     };
-    
+
     const [refreshing, setRefreshing] = useState(false);
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         setTimeout(() => {
-          setRefreshing(false);
+            setRefreshing(false);
         }, 2000);
-      }, []);
+    }, []);
 
-      const list = useGetList(type, refreshing);
+    const list = useGetList(type, refreshing);
 
     return (
         <SafeAreaView className="flex-1 bg-lightblue relative px-[5%] items-center">
@@ -49,10 +54,15 @@ const DeviceList = ({ navigation, route }) => {
                 </Text>
             </View>
             <View className="h-[78%] w-[100%]">
-                <ScrollView className="w-[100%]" 
+                <ScrollView
+                    className="w-[100%]"
                     refreshControl={
-                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                    }>
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }
+                >
                     <View className="w-[100%] bg-semiblue rounded-[20px]">
                         {list.map((device, index) => (
                             <DeviceItem

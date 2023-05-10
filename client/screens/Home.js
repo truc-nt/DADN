@@ -63,8 +63,6 @@ Notifications.setNotificationHandler({
 });
 
 export default function Home() {
-    
-
     const axiosPrivate = useAxiosPrivate();
 
     const [expoPushToken, setExpoPushToken] = useState('');
@@ -72,19 +70,16 @@ export default function Home() {
     const notificationListener = useRef();
     const responseListener = useRef();
 
-    
     const [refreshing, setRefreshing] = React.useState(false);
-    const [devices, _] = useGetDevices(refreshing)
+    const [devices, _] = useGetDevices(refreshing);
     const weather = useWeather(refreshing);
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         setTimeout(() => {
-          setRefreshing(false);
+            setRefreshing(false);
         }, 2000);
-      }, []);
-
-    
+    }, []);
 
     useEffect(() => {
         registerForPushNotificationsAsync().then(async (token) => {
@@ -119,8 +114,12 @@ export default function Home() {
             <View className="h-[75%] w-[100%]">
                 <ScrollView
                     refreshControl={
-                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                    }>
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }
+                >
                     <Weather weather={weather}></Weather>
                     <View className="h-[50px] justify-center">
                         <Text

@@ -50,5 +50,5 @@ exports.validateResult = (req, res, next) => {
     const result = validationResult(req).array();
     if (!result.length) return next();
     const err = result[0].msg;
-    res.json({ success: false, message: err });
+    res.status(403).json({ success: false, message: err });
 };

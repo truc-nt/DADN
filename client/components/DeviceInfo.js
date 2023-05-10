@@ -8,7 +8,7 @@ import PercentageBar from './PercentageBar';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { AntDesign } from '@expo/vector-icons';
 
-import {useEffect} from 'react'
+import { useEffect } from 'react';
 
 const DeviceInfo = (props) => {
     const [detail, setDetail] = useState(props.detail);
@@ -16,8 +16,8 @@ const DeviceInfo = (props) => {
     const [fanModal, setFanModal] = useState(false);
 
     useEffect(() => {
-        setDetail(props.detail)
-    }, [props.detail])
+        setDetail(props.detail);
+    }, [props.detail]);
 
     const ledColor = ['red', 'green', 'blue', 'orange'];
     const changeMode = async () => {
@@ -169,7 +169,9 @@ const DeviceInfo = (props) => {
                             style={{ fontFamily: 'LexendMedium' }}
                             className="w-[60%] text-[17px]"
                         >
-                            {'Tốc độ: ' + (detail.status ? detail.value : 0) + '%'}
+                            {'Tốc độ: ' +
+                                (detail.status ? detail.value : 0) +
+                                '%'}
                         </Text>
                         <AntDesign name="right" size={24} color="black" />
                     </TouchableOpacity>

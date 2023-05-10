@@ -18,6 +18,7 @@ exports.handleAddDevices = async (feedsFromAdafruitServer, userId) => {
             }
         } else if (key.toLowerCase().includes('anti')) {
             device.status = false;
+            device.value = last_value;
             device.type = 'siren';
         }
         await device.save();
@@ -40,9 +41,8 @@ const handleGetDevices = async (req, res) => {
 const handleGetDevice = async (req, res) => {
     const { _id } = req.user;
     const id = req.params.id;
-    console.log(_id, id)
-    //const device = await Device.findOne({ _id: id, userId: _id });
-    return res.status(202).json(_id);
+    const device = await Device.findOne({ _id: id, userId: _id });
+    res.status(202).json(device);
 };
 
 const handleGetAll = async (req, res) => {

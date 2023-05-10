@@ -84,7 +84,7 @@ export const useGetList = (type, refreshing) => {
 
 export const useGetDevice = (id, refreshing) => {
     const axiosPrivate = useAxiosPrivate();
-    const [detail, setDetail] = useState({})
+    const [detail, setDetail] = useState({});
 
     useFocusEffect(
         useCallback(() => {
@@ -92,7 +92,6 @@ export const useGetDevice = (id, refreshing) => {
             const controller = new AbortController();
             const getDevice = async () => {
                 try {
-                    console.log(id)
                     const res = await axiosPrivate.get(`devices/${id}`, {
                         signal: controller.signal,
                     });

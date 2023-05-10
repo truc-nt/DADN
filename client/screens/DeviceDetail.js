@@ -1,14 +1,23 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useState, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-import { View, Text, TouchableOpacity, Switch, ScrollView, RefreshControl } from 'react-native';
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    Switch,
+    ScrollView,
+    RefreshControl,
+} from 'react-native';
 import NavBar from '../components/NavBar';
 import TextChangeModal from '../components/TextChangeModal';
 import DeviceInfo from '../components/DeviceInfo';
 import TimeArrange from '../components/TimeArrange';
+import { useFocusEffect } from '@react-navigation/native';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import {useGetDevice} from '../hooks/useDevice'
+import { useGetDevice } from '../hooks/useDevice';
+import useGetTimers from '../hooks/useTimer';
 
 const DeviceDetail = ({ route, navigation }) => {
     useLayoutEffect(() => {
@@ -17,25 +26,30 @@ const DeviceDetail = ({ route, navigation }) => {
         });
     }, []);
 
-    const [detail, setDetail] = useState(route.params.detail);
-    
-    const [modalName, setModalName] = useState(false);
-    const axiosPrivate = useAxiosPrivate();
-
     const [refreshing, setRefreshing] = useState(false);
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         setTimeout(() => {
-          setRefreshing(false);
-        }, 20);
-      }, []);
+            setRefreshing(false);
+        }, 2000);
+    }, []);
+    const [detail, setDetail] = useGetDevice(
+        route.params.detail._id,
+        refreshing
+    );
+    const [timers, setTimers] = useGetTimers(
+        route.params.detail._id,
+        refreshing
+    );
+    const [modalName, setModalName] = useState(false);
+    const axiosPrivate = useAxiosPrivate();
 
     const updateStatus = async (id) => {
         try {
             const res = await axiosPrivate.put(`devices/status/${id}`);
-            console.log(res.data); 
-            
-            const status = detail.status
+            console.log(res.data);
+
+            const status = detail.status;
             if (detail.mode === 'Tự động')
                 setDetail({ ...detail, mode: 'Thủ công', status: !status });
             else {
@@ -60,9 +74,14 @@ const DeviceDetail = ({ route, navigation }) => {
                 </Text>
             </View>
             <View className="h-[78%] w-[100%]">
-                <ScrollView refreshControl={
-                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                    }>
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }
+                >
                     <View className="flex-row w-[100%] h-[65px] bg-semiblue rounded-[20px] items-center px-[5%] mb-[25px]">
                         <View className="flex-row w-[70%] items-center">
                             <Text
@@ -96,7 +115,12 @@ const DeviceDetail = ({ route, navigation }) => {
                         detail={detail}
                         setDetail={setDetail}
                     ></DeviceInfo>
-                    <TimeArrange device={detail} id={detail._id} />
+                    <TimeArrange
+                        device={detail}
+                        id={detail._id}
+                        timers={timers}
+                        setTimers={setTimers}
+                    />
                     <TextChangeModal
                         visible={modalName}
                         setModal={setModalName}

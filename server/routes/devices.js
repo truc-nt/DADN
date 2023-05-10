@@ -10,7 +10,6 @@ router.get('/amount', device.handleGetDevices);
 router.get('/:id', device.handleGetDevice);
 router.get('/:type/all', device.handleGetAll);
 
-
 router.put('/:type/status', device.handleChangeAllStatus);
 router.put('/status/:id', device.handleChangeStatus);
 router.put('/mode/:id', device.handleChangeMode);

@@ -7,7 +7,7 @@ const handleRegister = async (req, res) => {
     const { username, password, io_username, io_key } = await req.body;
     const isValidUsername = await User.isValidUsername(username);
     if (!isValidUsername)
-        return res.json({
+        return res.status(403).json({
             success: false,
             message:
                 'Username đã được dùng rồi, vui lòng sử dụng username khác',
@@ -19,7 +19,7 @@ const handleRegister = async (req, res) => {
         res
     );
     if (!feedsFromAdafruitServer.length)
-        return res.json({
+        return res.status(403).json({
             success: false,
             message:
                 'Adafruit Server tương ứng không tồn tại hoặc đã được đăng kí',

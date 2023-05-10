@@ -25,7 +25,7 @@ const scheduleAction = async (user, device, timer) => {
             },
             async () => {
                 let body = '';
-                console.log("hi", timer, timer?.mode === 'Thủ công')
+                console.log('hi', timer, timer?.mode === 'Thủ công');
                 if (timer?.mode === 'Thủ công') {
                     if (device.type !== 'siren') device.mode = 'Thủ công';
                     if (time[1] === 'from') {
@@ -57,7 +57,6 @@ const scheduleAction = async (user, device, timer) => {
                             device.status = false;
                         }
                     }
-                    
                 }
                 pushNotification(user, 'Hẹn giờ', body);
                 await device.save();
@@ -81,7 +80,7 @@ const scheduleActions = async () => {
 const handleGetTimers = async (req, res) => {
     const id = req.params.deviceId;
     const timers = await Timer.find({ deviceId: id }, { __v: 0, deviceId: 0 });
-    res.send(timers);
+    res.status(202).json(timers);
 };
 
 const handleAddTimer = async (req, res) => {

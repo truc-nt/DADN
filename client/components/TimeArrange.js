@@ -329,7 +329,7 @@ const TimePick = (props) => {
 };
 
 const TimeArrange = (props) => {
-    const [timers, setTimers] = useGetTimers(props.device._id);
+    const { timers, setTimers } = props;
     const [timePick, setTimePick] = useState(false);
     const axiosPrivate = useAxiosPrivate();
 

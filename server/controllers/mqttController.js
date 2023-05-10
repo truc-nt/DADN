@@ -58,10 +58,12 @@ const connectPublisher = async (userId) => {
                     if (parseInt(message) === 0) {
                         device.status = false;
                     } else {
-                        let value = parseInt(message)
+                        let value = parseInt(message);
                         if (device.type === 'light' && value > 4) value = 4;
-                        else if (device.type === 'fan' && value > 100) value = 100;
-                        else if (device.type === 'fan' && value < 0) value = device.value
+                        else if (device.type === 'fan' && value > 100)
+                            value = 100;
+                        else if (device.type === 'fan' && value < 0)
+                            value = device.value;
                         device.value = value;
                         device.status = value > 0 ? true : false;
                     }
