@@ -81,9 +81,7 @@ const handleLogout = async (req, res) => {
     const { refreshToken } = req.body;
     console.log(refreshToken);
     const user = await User.findOne({ refreshToken });
-
     if (!user) return res.status(204).json('err');
-
     user.refreshToken = user.refreshToken.filter((rt) => rt !== refreshToken);
     const result = await user.save();
     console.log(result);
