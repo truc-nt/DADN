@@ -42,6 +42,7 @@ const handleRegister = async (req, res) => {
 };
 
 const handleLogin = async (req, res) => {
+    console.log("cuu")
     const { username, password } = req.body;
     const user = await User.findOne({ username });
     if (!user) return res.status(404).json('Tên đăng nhập không hợp lệ');

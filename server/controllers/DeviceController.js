@@ -1,4 +1,5 @@
 const Device = require('../models/DeviceModel');
+const {publishData} = require('../controllers/mqttController')
 
 exports.handleAddDevices = async (feedsFromAdafruitServer, userId) => {
     feedsFromAdafruitServer.map(async (feed) => {
@@ -60,6 +61,20 @@ const handleChangeStatus = async (req, res) => {
     const id = req.params.id;
     const updated = await Device.findOne({ _id: id, userId: _id });
     updated.changeStatus(io_username, io_key, !updated.status);
+    if (updated.type === "siren") {
+        const devices = await Device.find({ userId: updated.userId })
+        devices.forEach(async (tmp) => {
+                    if (
+                        tmp.type !== 'siren' &&
+                        tmp.mode === 'Tự động' &&
+                        tmp.status
+                    ) {
+                        publishData(updated.userId, tmp.key, 0)
+                        await tmp.save()
+                    }
+                });
+        
+    }
     res.status(202).json('successful');
 };
 
@@ -77,8 +92,21 @@ const handleChangeAllStatus = async (req, res) => {
     const { type } = req.params;
     const { status } = req.body;
     const collections = await Device.find({ userId: _id, type: type });
-    collections.forEach((collection) => {
+    collections.forEach(async (collection) => {
         collection.changeStatus(io_username, io_key, status);
+        if (collection.type === "siren") {
+            const devices = await Device.find({ userId: collection.userId })
+            devices.forEach(async (tmp) => {
+                        if (
+                            tmp.type !== 'siren' &&
+                            tmp.mode === 'Tự động' &&
+                            tmp.status
+                        ) {
+                            publishData(collection.userId, tmp.key, 0)
+                            await tmp.save()
+                        }
+                    });
+        }
     });
     res.status(202).json('successful');
 };

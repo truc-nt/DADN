@@ -28,7 +28,7 @@ const PercentageBar = (props) => {
             props.setValue(Math.round(value));
         }
     };
-
+    
     return (
         <Modal
             animationType="slide"
@@ -88,7 +88,7 @@ const PercentageBar = (props) => {
                     </Text>
                 </View>
             </View>
-        </Modal>
+                    </Modal>
     );
 };
 

@@ -11,13 +11,15 @@ import { AntDesign } from '@expo/vector-icons';
 import { useEffect } from 'react';
 
 const DeviceInfo = (props) => {
-    const [detail, setDetail] = useState(props.detail);
+    const {detail, setDetail} = props
     const [modalPosition, setModalPosition] = useState(false);
     const [fanModal, setFanModal] = useState(false);
 
-    useEffect(() => {
+    /*useEffect(() => {
         setDetail(props.detail);
-    }, [props.detail]);
+    }, [props.detail]);*/
+
+    console.log(detail, setDetail)
 
     const ledColor = ['red', 'green', 'blue', 'orange'];
     const changeMode = async () => {
@@ -162,7 +164,7 @@ const DeviceInfo = (props) => {
                 {props?.detail?.type === 'fan' && (
                     <TouchableOpacity
                         className="flex-row w-[100%] justify-between h-[65px] items-center"
-                        onPress={() => setFanModal(true)}
+                onPress={() => {setFanModal(true)}}
                     >
                         <Text
                             numberOfLines={1}
@@ -171,7 +173,7 @@ const DeviceInfo = (props) => {
                         >
                             {'Tốc độ: ' +
                                 (detail.status ? detail.value : 0) +
-                                '%'}
+                '%'}
                         </Text>
                         <AntDesign name="right" size={24} color="black" />
                     </TouchableOpacity>
@@ -187,13 +189,13 @@ const DeviceInfo = (props) => {
                 deviceId={props.detail._id}
                 detail={detail}
             />
-            <PercentageBar
+            {fanModal && <PercentageBar
                 visible={fanModal}
                 setModal={setFanModal}
                 id={props.detail._id}
                 setDetail={setDetail}
                 detail={detail}
-            />
+            />}
         </>
     );
 };

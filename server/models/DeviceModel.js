@@ -62,6 +62,7 @@ DeviceSchema.methods.changeStatus = async function (
                 );
             } else {
                 this.status = status;
+                if (!status) this.value = 0
                 await this.save();
             }
         }
